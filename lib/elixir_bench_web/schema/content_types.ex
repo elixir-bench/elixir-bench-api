@@ -19,7 +19,7 @@ defmodule ElixirBenchWeb.Schema.ContentTypes do
     end
 
     field :jobs, list_of(:job) do
-      resilve fn %{id: id}, _, _ ->
+      resolve fn %{id: id}, _, _ ->
         batch({__MODULE__, :list_jobs_by_repo_id}, id, fn batch_results ->
           {:ok, Map.get(batch_results, id, [])}
         end)
