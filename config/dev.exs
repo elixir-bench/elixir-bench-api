@@ -39,8 +39,8 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :elixir_bench, ElixirBench.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "postgress",
+  password: "postgress",
   database: "elixir_bench_dev",
   hostname: "localhost",
   pool_size: 10
