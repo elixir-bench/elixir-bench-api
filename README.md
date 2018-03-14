@@ -31,3 +31,7 @@ Now you can visit [`localhost:4000/api/graphiql`](http://localhost:4000/api/grap
 ## Deployment
 
 To build the release you can use `mix release`. The relese requires a `PORT` environment variable.
+
+## License
+
+ElixirBench API is released under the Apache 2.0 License - see the [LICENSE](LICENSE.md) file.
