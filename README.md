@@ -2,6 +2,9 @@
 
 # ElixirBench API
 
+[![Travis build](https://secure.travis-ci.org/elixir-bench/elixir-bench-api.svg?branch=master
+"Build Status")](https://travis-ci.org/elixir-bench/elixir-bench-api)
+
 This project provides a public GraphQL API for exploring the results of the
 benchmarks and is responsible for jobs scheduling.
 

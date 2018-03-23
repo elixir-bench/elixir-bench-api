@@ -1,0 +1,10 @@
+language: elixir
+sudo: false
+elixir: '1.5'
+otp_release: '20.0'
+
+addons:
+  postgresql: "9.6"
+
+script:
+  - mix test
