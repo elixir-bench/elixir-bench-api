@@ -4,6 +4,8 @@
 
 [![Travis build](https://secure.travis-ci.org/elixir-bench/elixir-bench-api.svg?branch=master
 "Build Status")](https://travis-ci.org/elixir-bench/elixir-bench-api)
+[![Coverage Status](https://coveralls.io/repos/github/elixir-bench/elixir-bench-api/badge.svg?branch=master
+"Test Coverage")](https://coveralls.io/github/elixir-bench/elixir-bench-api?branch=master)
 
 This project provides a public GraphQL API for exploring the results of the
 benchmarks and is responsible for jobs scheduling.
