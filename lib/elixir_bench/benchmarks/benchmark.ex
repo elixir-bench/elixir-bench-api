@@ -3,11 +3,12 @@ defmodule ElixirBench.Benchmarks.Benchmark do
   import Ecto.Changeset
 
   alias ElixirBench.Benchmarks.{Benchmark, Measurement}
+  alias ElixirBench.Repos
 
   schema "benchmarks" do
     field :name, :string
-    field :repo_id, :integer
 
+    belongs_to :repo, Repos.Repo
     has_many :measurements, Measurement
 
     timestamps(type: :utc_datetime)
