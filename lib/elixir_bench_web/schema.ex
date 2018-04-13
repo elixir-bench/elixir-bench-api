@@ -22,7 +22,7 @@ defmodule ElixirBenchWeb.Schema do
       end
     end
 
-    field :benchmark, non_null(:benchmark) do
+    field :benchmark, (:benchmark) do
       arg :repo_slug, non_null(:string)
       arg :name, non_null(:string)
       resolve fn %{repo_slug: slug, name: name}, _ ->
@@ -32,7 +32,7 @@ defmodule ElixirBenchWeb.Schema do
       end
     end
 
-    field :measurement, non_null(:measurement) do
+    field :measurement, (:measurement) do
       arg :id, non_null(:id)
       resolve fn %{id: id}, _ ->
         Benchmarks.fetch_measurement(id)
@@ -45,7 +45,7 @@ defmodule ElixirBenchWeb.Schema do
       end
     end
 
-    field :job, non_null(:job) do
+    field :job, (:job) do
       arg :id, non_null(:id)
       resolve fn %{id: id}, _ ->
         Benchmarks.fetch_job(id)
