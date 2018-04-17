@@ -18,6 +18,12 @@ defmodule ElixirBenchWeb.Router do
     put("/jobs/:id", JobController, :update)
   end
 
+  scope "/hooks", ElixirBenchWeb do
+    pipe_through [:api]
+
+    post("/handle", WebHooks, :handle)
+  end
+
   scope "/api" do
     pipe_through :api
 

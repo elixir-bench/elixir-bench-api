@@ -458,10 +458,4 @@ defmodule ElixirBenchWeb.SchemaTest do
     conn
     |> post("/api", AbsintheHelpers.query_skeleton(query))
   end
-
-  defp decode_response_body(response) do
-    response
-    |> Map.get(:resp_body)
-    |> Antidote.decode()
-  end
 end
