@@ -51,3 +51,6 @@ config :elixir_bench, ElixirBenchWeb.Endpoint, server: true
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 import_config "prod.secret.exs"
+
+# Set the Github client
+config :elixir_bench, :github_client, ElixirBench.Github.ClientHTTP
