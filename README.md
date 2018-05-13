@@ -17,7 +17,7 @@ interface.
 
 The projects needs Erlang, Elixir and PostgreSQL installed.
 
-For development, a database user called `postgress` with password `postgress` is required.
+For development, a database user called `postgres` with password `postgres` is required.
 If desired otherwise, this configuration can be changed in `config/dev.exs`.
 
 ## Getting started
