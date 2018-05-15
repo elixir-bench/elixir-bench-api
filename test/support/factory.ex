@@ -56,7 +56,7 @@ defmodule ElixirBench.Factory do
       std_dev_ratio: 0.5319001605985423,
       ips: 2540.906993147397,
       std_dev_ips: 1351.5088377210595,
-      run_times: [],
+      run_times: [1.87, 1.44],
       percentiles: %{"50" => 377.0, "99" => 578.6900000000005},
     }
   end

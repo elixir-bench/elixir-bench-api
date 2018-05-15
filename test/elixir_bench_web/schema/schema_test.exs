@@ -16,25 +16,25 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      json_data =
-      %{
+      json_data = %{
         "data" => %{
            "repos" => [
              %{
                "name" => repo.name,
                "owner" => repo.owner,
-               "slug" => repo.owner <> "/" <> repo.name
+               "slug" => "#{repo.owner}/#{repo.name}"
              },
              %{
                "name" => another_repo.name,
                "owner" => another_repo.owner,
-               "slug" => another_repo.owner <> "/" <> another_repo.name
+               "slug" => "#{another_repo.owner}/#{another_repo.name}"
              }
            ]
          }
        }
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -49,11 +49,12 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
-      %{"data" => %{"repos" => []}} = resp
+      assert response_match?(:empty_data, resp, "repos")
     end
   end
 
@@ -69,8 +70,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      json_data =
-      %{
+      json_data = %{
         "data" => %{
            "repo" => %{
              "name" => "ecto",
@@ -80,7 +80,8 @@ defmodule ElixirBenchWeb.SchemaTest do
          }
        }
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -94,7 +95,8 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -112,16 +114,12 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      resp_body = context.conn
+      resp_body =
+        context.conn
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      Enum.each(required_fields, fn field ->
-        assert(
-          Regex.match?(~r/errors.*#{field}.*found null/, resp_body),
-          "Field '#{field}' not found in #{resp_body}"
-        )
-      end)
+      assert_required_fields(resp_body, required_fields)
     end
 
     test "return slug error message when invalid slug is given", context do
@@ -131,7 +129,8 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -155,8 +154,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      json_data =
-      %{
+      json_data = %{
         "data" => %{
            "benchmark" => %{
              "name" => "insert_mysql/insert_plain",
@@ -164,7 +162,8 @@ defmodule ElixirBenchWeb.SchemaTest do
          }
        }
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -183,7 +182,8 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -202,7 +202,8 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -220,16 +221,12 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      resp_body = context.conn
+      resp_body =
+        context.conn
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      Enum.each(required_fields, fn field ->
-        assert(
-          Regex.match?(~r/errors.*#{field}.*found null/, resp_body),
-          "Field '#{field}' not found in #{resp_body}"
-        )
-      end)
+      assert_required_fields(resp_body, required_fields)
     end
   end
 
@@ -269,26 +266,26 @@ defmodule ElixirBenchWeb.SchemaTest do
           }
         }
       """
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
-      json_data =
-        %{
+      json_data = %{
           "data" => %{
             "measurement" => %{
               "id" => "#{measurement.id}",
               "collectedAt" => job.completed_at |> DateTime.to_iso8601,
               "commit" => %{
-                "message" => "#{job.commit_message}",
-                "sha" => "#{job.commit_sha}",
-                "url" => "#{job.commit_url}"
+                "message" => job.commit_message,
+                "sha" => job.commit_sha,
+                "url" => job.commit_url
               },
               "environment" => %{
-                "cpu" => "#{job.cpu}",
+                "cpu" => job.cpu,
                 "cpuCount" => job.cpu_count,
-                "elixirVersion" => "#{job.elixir_version}",
-                "erlangVersion" => "#{job.erlang_version}",
+                "elixirVersion" => job.elixir_version,
+                "erlangVersion" => job.erlang_version,
                 "memory" => job.memory_mb
               },
               "result" => %{
@@ -319,7 +316,8 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -337,25 +335,20 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      resp_body = context.conn
+      resp_body =
+        context.conn
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      Enum.each(required_fields, fn field ->
-        assert(
-          Regex.match?(~r/errors.*#{field}.*found null/, resp_body),
-          "Field '#{field}' not found in #{resp_body}"
-        )
-      end)
-
+      assert_required_fields(resp_body, required_fields)
     end
   end
 
   describe "jobs query" do
     test "list all jobs", context do
       jobs_ids =
-      insert_list(3, :job)
-      |> Enum.map(fn job -> Integer.to_string(job.id) end)
+        insert_list(3, :job)
+        |> Enum.map(fn job -> Integer.to_string(job.id) end)
 
       query = """
         jobs {
@@ -363,8 +356,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      json_data =
-      %{
+      json_data = %{
         "data" => %{
            "jobs" => [
              %{"id" => Enum.at(jobs_ids, 0)},
@@ -374,7 +366,8 @@ defmodule ElixirBenchWeb.SchemaTest do
          }
        }
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -388,18 +381,12 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      json_data =
-      %{
-        "data" => %{
-           "jobs" => []
-         }
-       }
-
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
-      assert ^json_data = resp
+      assert response_match?(:empty_data, resp, "jobs")
     end
   end
 
@@ -413,8 +400,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      json_data =
-      %{
+      json_data = %{
         "data" => %{
            "job" => %{
              "id" => "#{job.id}",
@@ -422,7 +408,8 @@ defmodule ElixirBenchWeb.SchemaTest do
          }
        }
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -437,7 +424,8 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      {:ok, resp} = context.conn
+      {:ok, resp} =
+        context.conn
         |> execute_query(query)
         |> decode_response_body
 
@@ -455,16 +443,12 @@ defmodule ElixirBenchWeb.SchemaTest do
         }
       """
 
-      resp_body = context.conn
+      resp_body =
+        context.conn
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      Enum.each(required_fields, fn field ->
-        assert(
-          Regex.match?(~r/errors.*#{field}.*found null/, resp_body),
-          "Field '#{field}' not found in #{resp_body}"
-        )
-      end)
+      assert_required_fields(resp_body, required_fields)
 
     end
   end
@@ -478,6 +462,34 @@ defmodule ElixirBenchWeb.SchemaTest do
     response
     |> Map.get(:resp_body)
     |> Antidote.decode
+  end
+
+  defp assert_required_fields(resp_body, required_fields) do
+    Enum.map(required_fields, fn field ->
+      assert(
+        response_match?(:required_field, resp_body, field),
+        "Error message not found for field \"#{field}\" in #{resp_body}"
+      )
+    end)
+  end
+
+  """
+  This function follows the Absinthe error message pattern and can break if
+  this pattern changes in future versions. Therefore it should be used inside
+  another assertive function like in assert_required_fields/2
+  """
+  defp response_match?(:required_field, response, field) do
+    response =~ ~r/In argument \\\"#{field}\\\": Expected type .*, found null/
+  end
+
+  defp response_match?(:empty_data, response, query) do
+    json_data = %{
+      "data" => %{
+         query => []
+       }
+     }
+
+    json_data == response
   end
 end
 

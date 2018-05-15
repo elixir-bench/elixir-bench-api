@@ -11,7 +11,6 @@ defmodule ElixirBench.Mixfile do
       start_permanent: Mix.env == :prod,
       aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [smoke_test: :test],
       deps: deps()
     ]
   end
@@ -67,8 +66,7 @@ defmodule ElixirBench.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test": ["ecto.drop --quiet", "ecto.create --quiet", "ecto.migrate", "test"],
-      "smoke_test": ["test"],
+      "test": ["ecto.create --quiet", "ecto.migrate", "test"],
     ]
   end
 end
