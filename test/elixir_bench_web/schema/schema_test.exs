@@ -2,6 +2,7 @@ defmodule ElixirBenchWeb.SchemaTest do
   use ElixirBenchWeb.ConnCase
 
   alias ElixirBenchWeb.AbsintheHelpers
+  import ElixirBenchWeb.TestHelpers
 
   describe "repos query" do
     test "return repos list", context do
@@ -54,7 +55,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> decode_response_body
 
-      assert response_match?(:empty_data, resp, "repos")
+      assert_empty_response_data("repos", resp)
     end
   end
 
@@ -119,7 +120,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      assert_required_fields(resp_body, required_fields)
+      assert_required_fields_message(required_fields, resp_body)
     end
 
     test "return slug error message when invalid slug is given", context do
@@ -226,7 +227,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      assert_required_fields(resp_body, required_fields)
+      assert_required_fields_message(required_fields, resp_body)
     end
   end
 
@@ -340,7 +341,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      assert_required_fields(resp_body, required_fields)
+      assert_required_fields_message(required_fields, resp_body)
     end
   end
 
@@ -386,7 +387,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> decode_response_body
 
-      assert response_match?(:empty_data, resp, "jobs")
+      assert_empty_response_data("jobs", resp)
     end
   end
 
@@ -448,8 +449,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      assert_required_fields(resp_body, required_fields)
-
+      assert_required_fields_message(required_fields, resp_body)
     end
   end
 
@@ -462,34 +462,6 @@ defmodule ElixirBenchWeb.SchemaTest do
     response
     |> Map.get(:resp_body)
     |> Antidote.decode
-  end
-
-  defp assert_required_fields(resp_body, required_fields) do
-    Enum.map(required_fields, fn field ->
-      assert(
-        response_match?(:required_field, resp_body, field),
-        "Error message not found for field \"#{field}\" in #{resp_body}"
-      )
-    end)
-  end
-
-  """
-  This function follows the Absinthe error message pattern and can break if
-  this pattern changes in future versions. Therefore it should be used inside
-  another assertive function like in assert_required_fields/2
-  """
-  defp response_match?(:required_field, response, field) do
-    response =~ ~r/In argument \\\"#{field}\\\": Expected type .*, found null/
-  end
-
-  defp response_match?(:empty_data, response, query) do
-    json_data = %{
-      "data" => %{
-         query => []
-       }
-     }
-
-    json_data == response
   end
 end
 
