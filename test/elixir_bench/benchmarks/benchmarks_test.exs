@@ -3,15 +3,15 @@ defmodule ElixirBench.BenchmarksTest do
   alias ElixirBench.{Benchmarks, Benchmarks.Job}
   alias ElixirBench.Repos
 
-  describe "when correct params" do
-    test "create_job/2 should return new Job" do
+  describe "create_job/2" do
+    test "return a new Job given correct params" do
       {:ok, repo} = Repos.create_repo(%{owner: "elixir-ecto", name: "ecto"})
       job_attrs = %{branch_name: "mm/benche", commit_sha: "ABC123"}
 
-      jobs_count = ElixirBench.Repo.all(Job) |> length
+      jobs_count = Repo.aggregate(Job, :count, :id)
       assert {:ok, %Job{}} = Benchmarks.create_job(repo, job_attrs)
 
-      new_count = ElixirBench.Repo.all(Job) |> length
+      new_count = Repo.aggregate(Job, :count, :id)
       assert new_count > jobs_count
     end
   end

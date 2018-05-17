@@ -2,18 +2,10 @@ defmodule ElixirBench.Github.ClientHTTP do
   @moduledoc """
   The Github HTTP client.
 
-  This client uses HTTP requests to gather data from yml files in given
-  repository hosted on Github. It uses the `:hackney` library to actually send
-  the requests and the `yamerl` library to decode the data in the yml format.
+  This client uses HTTP requests to gather data from yml files in a given
+  repository hosted on Github.
 
-  Requests follow a base url:
-
-    - base_url = 'https://raw.githubusercontent.com'
-
-  This module implements the following functions:
-
-    - a `get_yaml/1` function that takes the url path of the project and return
-      the raw parsed data in the yaml format.
+  Requests follow the base url: 'https://raw.githubusercontent.com'
   """
 
   @behaviour ElixirBench.Github.Client
@@ -33,7 +25,7 @@ defmodule ElixirBench.Github.ClientHTTP do
   defp get(url, headers, callback) do
     options = [:with_body, ssl_options: []]
 
-    case :hackney.get(url, headers, <<>>, options) do
+    case :hackney.get(url, headers, "", options) do
       {:ok, 200, _headers, data} ->
         callback.(data)
       {:ok, status, _headers, data} ->
@@ -44,7 +36,6 @@ defmodule ElixirBench.Github.ClientHTTP do
   end
 
   defp url(path) do
-    base_url = 'https://raw.githubusercontent.com'
-    Path.join(base_url, path)
+    Path.join("https://raw.githubusercontent.com", path)
   end
 end
