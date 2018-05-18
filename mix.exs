@@ -11,6 +11,10 @@ defmodule ElixirBench.Mixfile do
       start_permanent: Mix.env == :prod,
       aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        "coveralls": :test, "coveralls.detail": :test,
+        "coveralls.post": :test, "coveralls.html": :test,
+        "coveralls.travis": :test, "safe_coveralls.travis": :test],
       deps: deps()
     ]
   end
@@ -26,7 +30,7 @@ defmodule ElixirBench.Mixfile do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/support", "mix"]
   defp elixirc_paths(_),     do: ["lib"]
 
   # Specifies your project dependencies.
