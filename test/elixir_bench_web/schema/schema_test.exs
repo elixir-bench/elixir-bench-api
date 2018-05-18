@@ -55,7 +55,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> decode_response_body
 
-      assert_empty_response_data("repos", resp)
+      assert_empty_response_data(resp, "repos")
     end
   end
 
@@ -120,7 +120,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      assert_required_fields_message(required_fields, resp_body)
+      assert_required_fields_message(resp_body, required_fields)
     end
 
     test "return slug error message when invalid slug is given", context do
@@ -227,7 +227,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      assert_required_fields_message(required_fields, resp_body)
+      assert_required_fields_message(resp_body, required_fields)
     end
   end
 
@@ -341,7 +341,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      assert_required_fields_message(required_fields, resp_body)
+      assert_required_fields_message(resp_body, required_fields)
     end
   end
 
@@ -387,7 +387,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> decode_response_body
 
-      assert_empty_response_data("jobs", resp)
+      assert_empty_response_data(resp, "jobs")
     end
   end
 
@@ -449,7 +449,7 @@ defmodule ElixirBenchWeb.SchemaTest do
         |> execute_query(query)
         |> Map.get(:resp_body)
 
-      assert_required_fields_message(required_fields, resp_body)
+      assert_required_fields_message(resp_body, required_fields)
     end
   end
 

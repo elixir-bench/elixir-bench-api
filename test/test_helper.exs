@@ -24,7 +24,7 @@ defmodule ElixirBenchWeb.TestHelpers do
 
   import ExUnit.Assertions
 
-  def assert_required_fields_message(required_fields, resp_body) do
+  def assert_required_fields_message(resp_body, required_fields) do
     Enum.map(required_fields, fn field ->
       assert(
         required_field_message_in_string?(field, resp_body),
@@ -33,14 +33,14 @@ defmodule ElixirBenchWeb.TestHelpers do
     end)
   end
 
-  def assert_empty_response_data(query, response) do
+  def assert_empty_response_data(response, query) do
     json_data = %{
       "data" => %{
          query => []
        }
      }
 
-    json_data == response
+    assert json_data == response
   end
 
   # This function follows the Absinthe error message pattern and can break if
