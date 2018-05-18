@@ -17,3 +17,6 @@ config :elixir_bench, ElixirBench.Repo,
   database: "elixir_bench_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+# Set the Github client
+config :elixir_bench, :github_client, ElixirBench.Github.ClientInMemory

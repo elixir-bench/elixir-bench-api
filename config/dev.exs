@@ -44,3 +44,6 @@ config :elixir_bench, ElixirBench.Repo,
   database: "elixir_bench_dev",
   hostname: "localhost",
   pool_size: 10
+
+# Set the Github client
+config :elixir_bench, :github_client, ElixirBench.Github.ClientHTTP
