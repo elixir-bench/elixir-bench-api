@@ -10,4 +10,4 @@ env:
   - MIX_ENV=test
 
 script:
-  - mix coveralls.travis
+  - mix safe_coveralls.travis
