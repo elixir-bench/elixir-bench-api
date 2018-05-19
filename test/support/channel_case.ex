@@ -25,13 +25,13 @@ defmodule ElixirBenchWeb.ChannelCase do
     end
   end
 
-
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(ElixirBench.Repo)
+
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(ElixirBench.Repo, {:shared, self()})
     end
+
     :ok
   end
-
 end
