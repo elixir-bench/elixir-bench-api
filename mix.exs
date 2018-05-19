@@ -55,6 +55,7 @@ defmodule ElixirBench.Mixfile do
       {:yamerl, "~> 0.6.0"},
       {:confex, "~> 3.3"},
       {:excoveralls, "~> 0.8", only: :test},
+      {:ex_machina, "~> 2.2", only: :test},
       {:basic_auth, "~> 2.2"}
     ]
   end
@@ -69,7 +70,7 @@ defmodule ElixirBench.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test": ["ecto.create --quiet", "ecto.migrate", "test"]
+      "test": ["ecto.create --quiet", "ecto.migrate", "test"],
     ]
   end
 end

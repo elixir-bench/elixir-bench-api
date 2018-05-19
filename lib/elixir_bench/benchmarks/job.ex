@@ -3,12 +3,13 @@ defmodule ElixirBench.Benchmarks.Job do
 
   import Ecto.Changeset
 
+  alias ElixirBench.Repos
   alias ElixirBench.Benchmarks.{Runner, Job, Config}
 
   schema "jobs" do
     field :uuid, :binary_id
-    field :repo_id, :id
 
+    belongs_to :repo, Repos.Repo
     belongs_to :claimant, Runner, foreign_key: :claimed_by
     field :claimed_at, :utc_datetime
     field :completed_at, :utc_datetime
