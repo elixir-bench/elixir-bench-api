@@ -36,9 +36,9 @@ defmodule ElixirBenchWeb.TestHelpers do
   def assert_empty_response_data(response, query) do
     json_data = %{
       "data" => %{
-         query => []
-       }
-     }
+        query => []
+      }
+    }
 
     assert json_data == response
   end

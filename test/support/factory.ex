@@ -34,13 +34,13 @@ defmodule ElixirBench.Factory do
     repo = insert(:repo)
 
     job_attrs = %{
-      "memory_mb": 16384,
-      "erlang_version": "20.1",
-      "elixir_version": "1.5.2",
-      "cpu_count": 8,
-      "cpu": "Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz",
-      "repo": repo,
-      "completed_at": DateTime.utc_now(),
+      memory_mb: 16384,
+      erlang_version: "20.1",
+      elixir_version: "1.5.2",
+      cpu_count: 8,
+      cpu: "Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz",
+      repo: repo,
+      completed_at: DateTime.utc_now()
     }
 
     %Measurement{
@@ -57,8 +57,7 @@ defmodule ElixirBench.Factory do
       ips: 2540.906993147397,
       std_dev_ips: 1351.5088377210595,
       run_times: [1.87, 1.44],
-      percentiles: %{"50" => 377.0, "99" => 578.6900000000005},
+      percentiles: %{"50" => 377.0, "99" => 578.6900000000005}
     }
   end
 end
-

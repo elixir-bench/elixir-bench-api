@@ -19,20 +19,20 @@ defmodule ElixirBenchWeb.SchemaTest do
 
       json_data = %{
         "data" => %{
-           "repos" => [
-             %{
-               "name" => repo.name,
-               "owner" => repo.owner,
-               "slug" => "#{repo.owner}/#{repo.name}"
-             },
-             %{
-               "name" => another_repo.name,
-               "owner" => another_repo.owner,
-               "slug" => "#{another_repo.owner}/#{another_repo.name}"
-             }
-           ]
-         }
-       }
+          "repos" => [
+            %{
+              "name" => repo.name,
+              "owner" => repo.owner,
+              "slug" => "#{repo.owner}/#{repo.name}"
+            },
+            %{
+              "name" => another_repo.name,
+              "owner" => another_repo.owner,
+              "slug" => "#{another_repo.owner}/#{another_repo.name}"
+            }
+          ]
+        }
+      }
 
       {:ok, resp} =
         context.conn
@@ -73,13 +73,13 @@ defmodule ElixirBenchWeb.SchemaTest do
 
       json_data = %{
         "data" => %{
-           "repo" => %{
-             "name" => "ecto",
-             "owner" => "tallysmartins",
-             "slug" => "tallysmartins/ecto"
-           }
-         }
-       }
+          "repo" => %{
+            "name" => "ecto",
+            "owner" => "tallysmartins",
+            "slug" => "tallysmartins/ecto"
+          }
+        }
+      }
 
       {:ok, resp} =
         context.conn
@@ -157,11 +157,11 @@ defmodule ElixirBenchWeb.SchemaTest do
 
       json_data = %{
         "data" => %{
-           "benchmark" => %{
-             "name" => "insert_mysql/insert_plain",
-           }
-         }
-       }
+          "benchmark" => %{
+            "name" => "insert_mysql/insert_plain"
+          }
+        }
+      }
 
       {:ok, resp} =
         context.conn
@@ -267,43 +267,44 @@ defmodule ElixirBenchWeb.SchemaTest do
           }
         }
       """
+
       {:ok, resp} =
         context.conn
         |> execute_query(query)
         |> decode_response_body
 
       json_data = %{
-          "data" => %{
-            "measurement" => %{
-              "id" => "#{measurement.id}",
-              "collectedAt" => job.completed_at |> DateTime.to_iso8601,
-              "commit" => %{
-                "message" => job.commit_message,
-                "sha" => job.commit_sha,
-                "url" => job.commit_url
-              },
-              "environment" => %{
-                "cpu" => job.cpu,
-                "cpuCount" => job.cpu_count,
-                "elixirVersion" => job.elixir_version,
-                "erlangVersion" => job.erlang_version,
-                "memory" => job.memory_mb
-              },
-              "result" => %{
-                "average" => measurement.average,
-                "ips" => measurement.ips,
-                "maximum" => measurement.maximum,
-                "median" => measurement.median,
-                "minimum" => measurement.minimum,
-                "mode" => measurement.mode,
-                "sampleSize" => measurement.sample_size,
-                "stdDev" => measurement.std_dev,
-                "stdDevIps" => measurement.std_dev_ips,
-                "stdDevRatio" => measurement.std_dev_ratio
-              }
+        "data" => %{
+          "measurement" => %{
+            "id" => "#{measurement.id}",
+            "collectedAt" => job.completed_at |> DateTime.to_iso8601(),
+            "commit" => %{
+              "message" => job.commit_message,
+              "sha" => job.commit_sha,
+              "url" => job.commit_url
+            },
+            "environment" => %{
+              "cpu" => job.cpu,
+              "cpuCount" => job.cpu_count,
+              "elixirVersion" => job.elixir_version,
+              "erlangVersion" => job.erlang_version,
+              "memory" => job.memory_mb
+            },
+            "result" => %{
+              "average" => measurement.average,
+              "ips" => measurement.ips,
+              "maximum" => measurement.maximum,
+              "median" => measurement.median,
+              "minimum" => measurement.minimum,
+              "mode" => measurement.mode,
+              "sampleSize" => measurement.sample_size,
+              "stdDev" => measurement.std_dev,
+              "stdDevIps" => measurement.std_dev_ips,
+              "stdDevRatio" => measurement.std_dev_ratio
             }
           }
         }
+      }
 
       assert ^json_data = resp
     end
@@ -359,13 +360,13 @@ defmodule ElixirBenchWeb.SchemaTest do
 
       json_data = %{
         "data" => %{
-           "jobs" => [
-             %{"id" => Enum.at(jobs_ids, 0)},
-             %{"id" => Enum.at(jobs_ids, 1)},
-             %{"id" => Enum.at(jobs_ids, 2)}
-           ]
-         }
-       }
+          "jobs" => [
+            %{"id" => Enum.at(jobs_ids, 0)},
+            %{"id" => Enum.at(jobs_ids, 1)},
+            %{"id" => Enum.at(jobs_ids, 2)}
+          ]
+        }
+      }
 
       {:ok, resp} =
         context.conn
@@ -403,11 +404,11 @@ defmodule ElixirBenchWeb.SchemaTest do
 
       json_data = %{
         "data" => %{
-           "job" => %{
-             "id" => "#{job.id}",
-           }
-         }
-       }
+          "job" => %{
+            "id" => "#{job.id}"
+          }
+        }
+      }
 
       {:ok, resp} =
         context.conn
@@ -461,7 +462,6 @@ defmodule ElixirBenchWeb.SchemaTest do
   defp decode_response_body(response) do
     response
     |> Map.get(:resp_body)
-    |> Antidote.decode
+    |> Antidote.decode()
   end
 end
-
