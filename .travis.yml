@@ -1,7 +1,10 @@
 language: elixir
 sudo: false
-elixir: '1.5'
-otp_release: '20.0'
+elixir:
+  - 1.6.4
+otp_release:
+  - 19.3
+  - 20.3
 
 addons:
   postgresql: "9.6"
@@ -10,4 +13,10 @@ env:
   - MIX_ENV=test
 
 script:
+  - mix format --check-formatted
   - mix safe_coveralls.travis
+
+cache:
+  directories:
+    - _build
+    - deps
