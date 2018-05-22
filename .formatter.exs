@@ -1,7 +1,6 @@
 # Used by "mix format"
 [
-  inputs: ["mix.exs", "{test}/**/*.{ex,exs}"],
-  #inputs: ["mix.exs", "{config,test}/**/*.{ex,exs}"],
+  inputs: ["mix.exs", "{config,test}/**/*.{ex,exs}"],
   #inputs: ["mix.exs", "{config,test,lib/elixir_bench/benchmarks}/**/*.{ex,exs}"],
   #inputs: ["mix.exs", "{config,test,lib/elixir_bench/benchmarks,lib/elixir_bench/github}/**/*.{ex,exs}"],
   #inputs: ["mix.exs", "{config,test,lib/elixir_bench}/**/*.{ex,exs}"],
