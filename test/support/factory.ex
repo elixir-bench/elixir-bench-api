@@ -26,7 +26,8 @@ defmodule ElixirBench.Factory do
       commit_url: "git.com",
       elixir_version: "1.5.2",
       erlang_version: "20.1",
-      repo: build(:repo)
+      repo: build(:repo),
+      uuid: Ecto.UUID.generate()
     }
   end
 
