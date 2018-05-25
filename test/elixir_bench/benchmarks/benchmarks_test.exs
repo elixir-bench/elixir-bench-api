@@ -1,6 +1,7 @@
 defmodule ElixirBench.BenchmarksTest do
   use ElixirBench.DataCase
-  alias ElixirBench.{Benchmarks, Benchmarks.Job, Benchmarks.Runner}
+  alias ElixirBench.{Benchmarks, Benchmarks.Job, Benchmarks.Runner, Repos}
+  alias Benchmarks.{Benchmark, Measurement}
 
   import ElixirBenchWeb.TestHelpers
   import ElixirBench.Factory
@@ -8,18 +9,9 @@ defmodule ElixirBench.BenchmarksTest do
   describe "create_runner/1" do
     test "insert new Runner given correct params" do
       assert_difference(Runner, 1) do
-        Benchmarks.create_runner(%{name: "myrunner", api_key: "sudo"})
+        assert {:ok, runner} = Benchmarks.create_runner(%{name: "myrunner", api_key: "sudo"})
+        assert %Runner{name: "myrunner", api_key: "sudo"} = runner
       end
-    end
-
-    test "return the new Runner inserted" do
-      name = "myrunner"
-      api_key = "sudo"
-
-      {:ok, runner} = Benchmarks.create_runner(%{name: name, api_key: api_key})
-
-      assert runner.id
-      assert %Runner{name: ^name, api_key: ^api_key} = runner
     end
 
     test "return error when wrong params" do
@@ -32,55 +24,42 @@ defmodule ElixirBench.BenchmarksTest do
 
   describe "authenticate_runner/2" do
     test "authenticate with success given valid credentials" do
-      name = "myrunner"
-      api_key = "sudo"
+      Benchmarks.create_runner(%{name: "myrunner", api_key: "sudo"})
 
-      {:ok, my_runner} = Benchmarks.create_runner(%{name: name, api_key: api_key})
-
-      assert {:ok, runner} = Benchmarks.authenticate_runner(name, api_key)
-      assert_map_attr(my_runner, runner, [:name, :api_key_hash])
+      assert {:ok, runner} = Benchmarks.authenticate_runner("myrunner", "sudo")
+      assert %{name: "myrunner"} = runner
     end
 
     test "return error when invalid credentials" do
-      name = "myrunner"
+      {:ok, _} = Benchmarks.create_runner(%{name: "myrunner", api_key: "mykey"})
 
-      {:ok, runner} = Benchmarks.create_runner(%{name: name, api_key: "mykey"})
-
-      assert {:error, :not_found} = Benchmarks.authenticate_runner(runner.name, "anotherkey")
-    end
-
-    test "return error when runner does not exist" do
-      assert {:error, :not_found} = Benchmarks.authenticate_runner("IdoNotExist", "")
+      assert {:error, :not_found} = Benchmarks.authenticate_runner("myrunner", "anotherkey")
+      assert {:error, :not_found} = Benchmarks.authenticate_runner("", "")
     end
   end
 
   describe "fetch_benchmark/2" do
     test "return benchmark given valid params" do
-      my_bench = insert(:benchmark)
-      {:ok, bench} = Benchmarks.fetch_benchmark(my_bench.repo.id, my_bench.name)
+      %{id: bid, repo: repo, name: name} = insert(:benchmark)
+      {:ok, bench} = Benchmarks.fetch_benchmark(repo.id, name)
 
-      assert_map_attr(my_bench, bench, [:id, :name, :created_at])
+      assert %Benchmark{id: ^bid, name: ^name} = bench
     end
 
-    test "return error if benchmark or repo not found" do
-      repo = insert(:repo)
+    test "return error if benchmark not found" do
+      %{id: rid} = insert(:repo)
 
-      assert {:error, :not_found} = Benchmarks.fetch_benchmark(repo.id, "")
+      assert {:error, :not_found} = Benchmarks.fetch_benchmark(rid, "")
       assert {:error, :not_found} = Benchmarks.fetch_benchmark(nil, "")
     end
   end
 
   describe "fetch_measurement/1" do
     test "return measurement given valid id" do
-      my_measurement = insert(:measurement)
-      {:ok, measurement} = Benchmarks.fetch_measurement(my_measurement.id)
+      %{id: mid} = insert(:measurement)
+      {:ok, measurement} = Benchmarks.fetch_measurement(mid)
 
-      # FIXME find a way to also compare job and benchmark for given measurement
-      assert_map_attr(my_measurement, measurement, [:id, :sample_size, :run_times])
-
-      # This does not work because in `measurement` the attributes job and benchmark
-      # are not loaded `#Ecto.Association.NotLoaded`
-      # assert_map_attr(my_measurement, measurement, [:id, :job, :benchmark])
+      assert %Measurement{id: ^mid} = measurement
     end
 
     test "return error if measurement not found" do
@@ -91,10 +70,10 @@ defmodule ElixirBench.BenchmarksTest do
 
   describe "fetch_job/1" do
     test "return job given valid id" do
-      my_job = insert(:job)
-      {:ok, job} = Benchmarks.fetch_job(my_job.id)
+      %{id: jid} = insert(:job)
+      {:ok, job} = Benchmarks.fetch_job(jid)
 
-      assert_map_attr(my_job, job, [:id, :branch_name, :commit_message])
+      assert %Job{id: ^jid} = job
     end
 
     test "return error if job not found" do
@@ -105,14 +84,15 @@ defmodule ElixirBench.BenchmarksTest do
 
   describe "fetch_job_by_uuid/1" do
     test "return job given valid uuid" do
-      my_job = insert(:job)
-      {:ok, job} = Benchmarks.fetch_job_by_uuid(my_job.uuid)
+      %{id: jid, uuid: uuid} = insert(:job)
+      {:ok, job} = Benchmarks.fetch_job_by_uuid(uuid)
 
-      assert_map_attr(my_job, job, [:id, :uuid, :branch_name, :commit_message])
+      assert %Job{id: ^jid} = job
     end
 
     test "return error if job not found" do
       binary_uuid = "99999999-9999-9999-9999-999999999999"
+
       assert {:error, :not_found} = Benchmarks.fetch_job_by_uuid(nil)
       assert {:error, :not_found} = Benchmarks.fetch_job_by_uuid(binary_uuid)
     end
@@ -123,36 +103,24 @@ defmodule ElixirBench.BenchmarksTest do
       repo = insert(:repo)
 
       assert_difference(Job, 1) do
-        Benchmarks.create_job(repo, %{branch_name: "mm/benche", commit_sha: "ABC123"})
+        assert {:ok, job} =
+                 Benchmarks.create_job(repo, %{branch_name: "mm/benchee", commit_sha: "ABC123"})
+
+        assert %Job{branch_name: "mm/benchee", commit_sha: "ABC123"} = job
       end
-    end
-
-    test "return the new Job inserted" do
-      repo = insert(:repo)
-
-      {:ok, job} = Benchmarks.create_job(repo, %{branch_name: "mm/benche", commit_sha: "ABC123"})
-      assert %Job{} = job
     end
 
     test "return error when missing job attributes" do
       repo = insert(:repo)
 
-      {:error, changeset} = Benchmarks.create_job(repo, %{})
-
+      assert {:error, changeset} = Benchmarks.create_job(repo, %{})
       refute changeset.valid?
     end
 
     test "return error when repo is not on databse" do
-      repo = build(:repo)
-
-      {:error, changeset} =
-        Benchmarks.create_job(repo, %{branch_name: "mm/benche", commit_sha: "ABC123"})
-
-      refute changeset.valid?
+      assert_raise Postgrex.Error, fn ->
+        Benchmarks.create_job(%Repos.Repo{}, %{branch_name: "mm/benche", commit_sha: "ABC123"})
+      end
     end
-  end
-
-  def assert_map_attr(first, second, attr) do
-    assert Map.take(first, attr) == Map.take(second, attr)
   end
 end

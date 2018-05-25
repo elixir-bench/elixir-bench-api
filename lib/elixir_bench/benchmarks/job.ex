@@ -58,7 +58,6 @@ defmodule ElixirBench.Benchmarks.Job do
     |> cast(attrs, @create_fields)
     |> validate_required(@create_fields)
     |> put_change(:uuid, Ecto.UUID.generate())
-    |> foreign_key_constraint(:repo_id)
   end
 
   def submit_changeset(%Job{} = job, attrs) do
