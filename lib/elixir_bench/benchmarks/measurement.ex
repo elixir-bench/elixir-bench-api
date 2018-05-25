@@ -4,8 +4,8 @@ defmodule ElixirBench.Benchmarks.Measurement do
   alias ElixirBench.Benchmarks.{Benchmark, Job, Measurement}
 
   schema "measurements" do
-    belongs_to :benchmark, Benchmark
-    belongs_to :job, Job
+    belongs_to(:benchmark, Benchmark)
+    belongs_to(:job, Job)
 
     field :sample_size, :integer
     field :mode, :float

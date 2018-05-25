@@ -12,7 +12,7 @@ defmodule ElixirBench.Benchmarks do
   end
 
   def query(Benchmark, %{repo_id: repo_id}) do
-    from b in Benchmark, where: b.repo_id == ^repo_id
+    from(b in Benchmark, where: b.repo_id == ^repo_id)
   end
 
   def query(queryable, _args) do
@@ -65,9 +65,11 @@ defmodule ElixirBench.Benchmarks do
 
   def create_job(repo, attrs) do
     changeset = Job.create_changeset(%Job{repo_id: repo.id}, attrs)
+
     with {:ok, job} <- Ecto.Changeset.apply_action(changeset, :insert),
          {:ok, raw_config} <- Github.fetch_config(repo.owner, repo.name, job.commit_sha) do
       config_changeset = Config.changeset(%Config{}, raw_config)
+
       changeset
       |> Ecto.Changeset.put_embed(:config, config_changeset)
       |> Repo.insert()
@@ -94,11 +96,11 @@ defmodule ElixirBench.Benchmarks do
 
         multi
         |> Multi.run(benchmark, fn _ ->
-             {:ok, get_or_create_benchmark!(job.repo_id, name)}
-           end)
+          {:ok, get_or_create_benchmark!(job.repo_id, name)}
+        end)
         |> Multi.run({:measurement, name}, fn %{^benchmark => benchmark} ->
-             create_measurement(benchmark, job, result)
-           end)
+          create_measurement(benchmark, job, result)
+        end)
       end)
 
     case Repo.transaction(multi) do
@@ -123,12 +125,16 @@ defmodule ElixirBench.Benchmarks do
 
   defp fetch_unclaimed_job(runner) do
     # Unclaimed or claimed by this runner but not completed
-    Repo.fetch(from j in Job,
-      where: is_nil(j.claimed_by) and is_nil(j.claimed_at) and is_nil(j.completed_at),
-      or_where: j.claimed_by == ^runner.id and not is_nil(j.claimed_at) and is_nil(j.completed_at),
-      lock: "FOR UPDATE SKIP LOCKED",
-      order_by: j.inserted_at,
-      limit: 1
+    Repo.fetch(
+      from(
+        j in Job,
+        where: is_nil(j.claimed_by) and is_nil(j.claimed_at) and is_nil(j.completed_at),
+        or_where:
+          j.claimed_by == ^runner.id and not is_nil(j.claimed_at) and is_nil(j.completed_at),
+        lock: "FOR UPDATE SKIP LOCKED",
+        order_by: j.inserted_at,
+        limit: 1
+      )
     )
   end
 end

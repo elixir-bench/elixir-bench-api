@@ -1,13 +1,10 @@
 # Used by "mix format"
 [
-  inputs: ["mix.exs", "{config,test}/**/*.{ex,exs}"],
-  #inputs: ["mix.exs", "{config,test,lib/elixir_bench/benchmarks}/**/*.{ex,exs}"],
-  #inputs: ["mix.exs", "{config,test,lib/elixir_bench/benchmarks,lib/elixir_bench/github}/**/*.{ex,exs}"],
-  #inputs: ["mix.exs", "{config,test,lib/elixir_bench}/**/*.{ex,exs}"],
-  #inputs: ["mix.exs", "{config,test,lib/elixir_bench,lib/elixir_bench_web/controllers}/**/*.{ex,exs}"],
-  #inputs: ["mix.exs", "{config,test,lib/elixir_bench,lib/elixir_bench_web/controllers,lib/elixir_bench_web/schema}/**/*.{ex,exs}"],
-  #inputs: ["mix.exs", "{config,test,lib/elixir_bench,lib/elixir_bench_web/controllers,lib/elixir_bench_web/schema,lib/elixir_bench_web/views}/**/*.{ex,exs}"],
-  #inputs: ["mix.exs", "{config,lib,test}/**/*.{ex,exs}"],
+  inputs: ["mix.exs", "lib/elixir_bench/benchmarks/**/*.{ex,exs}", "{config,test}/**/*.{ex,exs}"],
+  #inputs: ["mix.exs", "lib/elixir_bench/{benchmarks,github}/**/*.{ex,exs}", "{config,test}/**/*.{ex,exs}"],
+  #inputs: ["mix.exs", "lib/elixir_bench/**/*.{ex,exs}", "{config,test}/**/*.{ex,exs}"],
+  #inputs: ["mix.exs","lib/elixir_bench_web/**/*.{ex,exs}", "lib/elixir_bench/**/*.{ex,exs}", "{config,test}/**/*.{ex,exs}"],
+  #inputs: ["mix.exs","{config,test,lib}/**/*.{ex,exs}"],
   locals_without_parens: [
     plug: 1,
     plug: 2,
