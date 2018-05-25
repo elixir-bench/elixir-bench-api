@@ -8,8 +8,8 @@ defmodule ElixirBench.Benchmarks.Benchmark do
   schema "benchmarks" do
     field :name, :string
 
-    belongs_to :repo, Repos.Repo
-    has_many :measurements, Measurement
+    belongs_to(:repo, Repos.Repo)
+    has_many(:measurements, Measurement)
 
     timestamps(type: :utc_datetime)
   end

@@ -10,6 +10,7 @@ defmodule ElixirBench.Benchmarks.Config do
     field :elixir, :string, default: Confex.fetch_env!(:elixir_bench, :default_elixir_version)
     field :erlang, :string, default: Confex.fetch_env!(:elixir_bench, :default_erlang_version)
     field :environment, {:map, :string}, default: %{}
+
     embeds_one :deps, Dep, primary_key: false do
       embeds_many :docker, Docker, primary_key: {:image, :string, []} do
         field :container_name, :string

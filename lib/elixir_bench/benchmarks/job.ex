@@ -9,8 +9,8 @@ defmodule ElixirBench.Benchmarks.Job do
   schema "jobs" do
     field :uuid, :binary_id
 
-    belongs_to :repo, Repos.Repo
-    belongs_to :claimant, Runner, foreign_key: :claimed_by
+    belongs_to(:repo, Repos.Repo)
+    belongs_to(:claimant, Runner, foreign_key: :claimed_by)
     field :claimed_at, :utc_datetime
     field :completed_at, :utc_datetime
     field :log, :string
@@ -27,7 +27,7 @@ defmodule ElixirBench.Benchmarks.Job do
     field :erlang_version, :string
     field :memory_mb, :integer
 
-    embeds_one :config, Config
+    embeds_one(:config, Config)
 
     timestamps()
   end
@@ -45,7 +45,7 @@ defmodule ElixirBench.Benchmarks.Job do
 
   @create_fields [
     :branch_name,
-    :commit_sha,
+    :commit_sha
   ]
 
   def claim_changeset(%Job{} = job, claimed_by) do
