@@ -28,8 +28,10 @@ defmodule ElixirBench.Github.ClientHTTP do
     case :hackney.get(url, headers, "", options) do
       {:ok, 200, _headers, data} ->
         callback.(data)
+
       {:ok, status, _headers, data} ->
         {:error, {status, data}}
+
       {:error, error} ->
         {:error, error}
     end
