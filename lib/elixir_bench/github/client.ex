@@ -10,5 +10,5 @@ defmodule ElixirBench.Github.Client do
   like in `ElixirBench.Github.ClientInMemory`.
   """
 
-  @callback get_yaml(path :: String.t) :: {:ok, config :: Map.t} | {:error, reason :: term}
+  @callback get_yaml(path :: String.t()) :: {:ok, config :: Map.t()} | {:error, reason :: term}
 end
