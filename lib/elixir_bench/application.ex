@@ -11,7 +11,7 @@ defmodule ElixirBench.Application do
       # Start the Ecto repository
       supervisor(ElixirBench.Repo, []),
       # Start the endpoint when the application starts
-      supervisor(ElixirBenchWeb.Endpoint, []),
+      supervisor(ElixirBenchWeb.Endpoint, [])
       # Start your own worker by calling: ElixirBench.Worker.start_link(arg1, arg2, arg3)
       # worker(ElixirBench.Worker, [arg1, arg2, arg3]),
     ]

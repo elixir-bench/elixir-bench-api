@@ -27,8 +27,9 @@ defmodule ElixirBenchWeb do
 
   def view do
     quote do
-      use Phoenix.View, root: "lib/elixir_bench_web/templates",
-                        namespace: ElixirBenchWeb
+      use Phoenix.View,
+        root: "lib/elixir_bench_web/templates",
+        namespace: ElixirBenchWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
