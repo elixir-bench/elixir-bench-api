@@ -76,6 +76,8 @@ defmodule ElixirBench.Benchmarks do
     end
   end
 
+  def claim_job(%Runner{id: id} = runner) when is_nil(id), do: {:error, :not_found}
+
   def claim_job(%Runner{} = runner) do
     Repo.transaction(fn ->
       with {:ok, job} <- fetch_unclaimed_job(runner) do

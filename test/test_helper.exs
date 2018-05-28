@@ -43,6 +43,22 @@ defmodule ElixirBenchWeb.TestHelpers do
     assert json_data == response
   end
 
+  defmacro assert_difference(queryable, value, do: expression) do
+    quote do
+      count_before = ElixirBench.Repo.aggregate(unquote(queryable), :count, :id)
+      unquote(expression)
+      count_after = ElixirBench.Repo.aggregate(unquote(queryable), :count, :id)
+
+      difference = count_after - count_before
+
+      assert(
+        unquote(value) == difference,
+        "expected #{unquote(queryable)} to differ by #{unquote(value)},
+             but the difference was #{difference}"
+      )
+    end
+  end
+
   # This function follows the Absinthe error message pattern and can break if
   # this pattern changes in future versions. Therefore it should be used inside
   # another assertive function like in assert_required_fields/2
