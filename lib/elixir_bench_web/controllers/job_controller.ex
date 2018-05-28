@@ -3,7 +3,7 @@ defmodule ElixirBenchWeb.JobController do
 
   alias ElixirBench.{Benchmarks, Repos, Benchmarks.Job}
 
-  action_fallback ElixirBenchWeb.FallbackController
+  action_fallback(ElixirBenchWeb.FallbackController)
 
   def claim(conn, _params) do
     with {:ok, %Job{} = job} <- Benchmarks.claim_job(conn.assigns.runner),

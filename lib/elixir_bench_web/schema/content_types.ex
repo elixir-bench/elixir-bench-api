@@ -8,22 +8,24 @@ defmodule ElixirBenchWeb.Schema.ContentTypes do
   object :repo do
     field :owner, :string
     field :name, :string
-    field :slug, :string, resolve: fn repo, _args, _info -> {:ok, "#{repo.owner}/#{repo.name}"} end
+
+    field :slug, :string,
+      resolve: fn repo, _args, _info -> {:ok, "#{repo.owner}/#{repo.name}"} end
 
     field :benchmarks, list_of(:benchmark) do
-      resolve fn %{id: id}, _, _ ->
+      resolve(fn %{id: id}, _, _ ->
         batch({__MODULE__, :list_benchmarks_by_repo_id}, id, fn batch_results ->
           {:ok, Map.get(batch_results, id, [])}
         end)
-      end
+      end)
     end
 
     field :jobs, list_of(:job) do
-      resolve fn %{id: id}, _, _ ->
+      resolve(fn %{id: id}, _, _ ->
         batch({__MODULE__, :list_jobs_by_repo_id}, id, fn batch_results ->
           {:ok, Map.get(batch_results, id, [])}
         end)
-      end
+      end)
     end
   end
 
@@ -34,15 +36,16 @@ defmodule ElixirBenchWeb.Schema.ContentTypes do
     field :claimed_at, :datetime
     field :completed_at, :datetime
     field :log, :string
+
     field :repo_slug, :string do
-      resolve fn %{repo_id: repo_id}, _, %{context: %{loader: loader}} ->
+      resolve(fn %{repo_id: repo_id}, _, %{context: %{loader: loader}} ->
         loader
         |> Dataloader.load(Repos, Repos.Repo, repo_id)
         |> on_load(fn loader ->
           %{owner: owner, name: name} = Dataloader.get(loader, Repos, Repos.Repo, repo_id)
           {:ok, "#{owner}/#{name}"}
         end)
-      end
+      end)
     end
   end
 
@@ -53,16 +56,18 @@ defmodule ElixirBenchWeb.Schema.ContentTypes do
 
   object :measurement do
     field :id, :id
+
     field :collected_at, :datetime do
-      resolve fn measurement, _, %{context: %{loader: loader}} ->
+      resolve(fn measurement, _, %{context: %{loader: loader}} ->
         loader
         |> Dataloader.load(Benchmarks, :job, measurement)
         |> on_load(fn loader ->
           %{completed_at: value} = Dataloader.get(loader, Benchmarks, :job, measurement)
           {:ok, value}
         end)
-      end
+      end)
     end
+
     field :commit, :commit, resolve: dataloader(Benchmarks, :job)
     field :environment, :environment, resolve: dataloader(Benchmarks, :job)
     field :result, :result, resolve: parent()
@@ -77,8 +82,10 @@ defmodule ElixirBenchWeb.Schema.ContentTypes do
   object :environment do
     field :elixir_version, :string
     field :erlang_version, :string
+
     field :dependency_versions, list_of(:package_version),
       resolve: map_to_list(:dependency_versions, :name, :version)
+
     field :cpu, :string
     field :cpu_count, :integer
     field :memory, :integer, resolve: key(:memory_mb)

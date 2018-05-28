@@ -3,7 +3,6 @@ defmodule ElixirBench.Repos.Repo do
   import Ecto.Changeset
   alias ElixirBench.Repos.Repo
 
-
   schema "repos" do
     field :name, :string
     field :owner, :string

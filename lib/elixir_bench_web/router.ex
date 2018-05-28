@@ -14,8 +14,8 @@ defmodule ElixirBenchWeb.Router do
   scope "/runner-api", ElixirBenchWeb do
     pipe_through [:api, :runner_secure]
 
-    post "/jobs/claim", JobController, :claim
-    put "/jobs/:id", JobController, :update
+    post("/jobs/claim", JobController, :claim)
+    put("/jobs/:id", JobController, :update)
   end
 
   scope "/api" do
@@ -30,6 +30,7 @@ defmodule ElixirBenchWeb.Router do
     case Benchmarks.authenticate_runner(username, password) do
       {:ok, runner} ->
         assign(conn, :runner, runner)
+
       {:error, _reason} ->
         send_resp(conn, :unauthorized, Antidote.encode!(%{error: "unauthorized"}))
     end

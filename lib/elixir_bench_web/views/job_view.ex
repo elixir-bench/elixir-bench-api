@@ -30,6 +30,7 @@ defmodule ElixirBenchWeb.JobView do
   defp render_docker(%{docker: docker}) when is_list(docker) do
     Enum.map(docker, &render_each_docker/1)
   end
+
   defp render_docker(nil), do: []
 
   def render_each_docker(docker) do
