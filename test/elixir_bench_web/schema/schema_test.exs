@@ -2,7 +2,6 @@ defmodule ElixirBenchWeb.SchemaTest do
   use ElixirBenchWeb.ConnCase
 
   alias ElixirBenchWeb.AbsintheHelpers
-  alias ElixirBench.Repos
   import ElixirBenchWeb.TestHelpers
 
   describe "repos query" do
@@ -24,12 +23,12 @@ defmodule ElixirBenchWeb.SchemaTest do
             %{
               "name" => repo.name,
               "owner" => repo.owner,
-              "slug" => Repos.Repo.slug(repo)
+              "slug" => "#{repo.owner}/#{repo.name}"
             },
             %{
               "name" => another_repo.name,
               "owner" => another_repo.owner,
-              "slug" => Repos.Repo.slug(another_repo)
+              "slug" => "#{another_repo.owner}/#{another_repo.name}"
             }
           ]
         }
@@ -149,7 +148,7 @@ defmodule ElixirBenchWeb.SchemaTest do
 
       query = """
         benchmark (
-          repo_slug: "#{Repos.Repo.slug(repo)}",
+          repo_slug: "#{repo.owner}/#{repo.name}",
           name: "insert_mysql/insert_plain"
         ) {
           name

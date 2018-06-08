@@ -17,7 +17,7 @@ defmodule ElixirBench.Repos.Repo do
     |> validate_required([:owner, :name])
   end
 
-  def slug(%Repo{} = repo) do
+  def slug(repo) do
     "#{repo.owner}/#{repo.name}"
   end
 end
