@@ -9,8 +9,7 @@ defmodule ElixirBenchWeb.Schema.ContentTypes do
     field :owner, :string
     field :name, :string
 
-    field :slug, :string,
-      resolve: fn repo, _args, _info -> {:ok, "#{repo.owner}/#{repo.name}"} end
+    field :slug, :string, resolve: fn repo, _args, _info -> {:ok, Repos.Repo.slug(repo)} end
 
     field :benchmarks, list_of(:benchmark) do
       resolve(fn %{id: id}, _, _ ->
