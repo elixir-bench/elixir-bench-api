@@ -11,6 +11,16 @@ defmodule ElixirBench.GithubFactory do
     end
   end
 
+  # Returns the payload of a push activity in a given repository.
+  # Payload example is read from fixtures/push.json and was copied from
+  # https://developer.github.com/v3/activity/events/types/#pushevent
+  def push_payload() do
+    case read_file("push.json") do
+      {:ok, data} -> data
+      {:error, _} -> ""
+    end
+  end
+
   def read_file(file) do
     Path.join(@fixtures_dir, file)
     |> File.read()

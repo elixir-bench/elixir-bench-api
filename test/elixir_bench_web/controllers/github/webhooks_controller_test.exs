@@ -25,7 +25,34 @@ defmodule ElixirBenchWeb.Github.WebHooksControllerTest do
       assert %{"branch_name" => "changes", "repo_slug" => "baxterthehacker/public-repo"} = data
     end
 
-    test "not break given unexpected payload scheme", context do
+    test "create job given push event", context do
+      insert(:repo, @github_repo_attrs)
+      params = %{"payload" => push_payload()}
+
+      assert_difference(Repo, 0) do
+        assert_difference(Job, 1) do
+          {:ok, %{"data" => data}} =
+            context.conn
+            |> set_headers("push")
+            |> post("/hooks/handle", params)
+            |> decode_response_body
+        end
+      end
+
+      assert %{"branch_name" => "changes", "repo_slug" => "baxterthehacker/public-repo"} = data
+    end
+
+    test "respond to ping event", context do
+      response =
+        context.conn
+        |> set_headers("ping")
+        |> post("/hooks/handle", %{"payload" => ~s({"data": "some data"})})
+
+      assert {:ok, %{"message" => "pong"}} = decode_response_body(response)
+      assert 200 = response.status
+    end
+
+    test "not break given unexpected pull request event payload scheme", context do
       insert(:repo, @github_repo_attrs)
       params = %{"payload" => ~s({"data": "some data"})}
 
@@ -42,9 +69,26 @@ defmodule ElixirBenchWeb.Github.WebHooksControllerTest do
       assert %{"detail" => "Bad request"} = errors
     end
 
+    test "not break given unexpected push event payload scheme", context do
+      insert(:repo, @github_repo_attrs)
+      params = %{"payload" => ~s({"data": "some data"})}
+
+      assert_difference(Repo, 0) do
+        assert_difference(Job, 0) do
+          {:ok, %{"errors" => errors}} =
+            context.conn
+            |> set_headers("push")
+            |> post("/hooks/handle", params)
+            |> decode_response_body
+        end
+      end
+
+      assert %{"detail" => "Bad request"} = errors
+    end
+
     test "return error given unprocessable event in header", context do
       insert(:repo, @github_repo_attrs)
-      params = %{"payload" => pull_request_payload()}
+      params = %{"payload" => push_payload()}
 
       {:ok, %{"errors" => errors}} =
         context.conn
@@ -57,7 +101,7 @@ defmodule ElixirBenchWeb.Github.WebHooksControllerTest do
 
     test "return error when event headers not present", context do
       insert(:repo, @github_repo_attrs)
-      params = %{"payload" => pull_request_payload()}
+      params = %{"payload" => push_payload()}
 
       {:ok, %{"errors" => errors}} =
         context.conn
@@ -86,10 +130,10 @@ defmodule ElixirBenchWeb.Github.WebHooksControllerTest do
 
       assert %{"detail" => "Bad request"} = errors
     end
+  end
 
-    defp set_headers(conn, event) do
-      conn
-      |> put_req_header("x-github-event", event)
-    end
+  defp set_headers(conn, event) do
+    conn
+    |> put_req_header("x-github-event", event)
   end
 end

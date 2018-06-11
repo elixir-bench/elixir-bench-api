@@ -8,23 +8,34 @@ defmodule ElixirBenchWeb.Github.WebHooks do
 
   def handle(conn, params) do
     with {:ok, payload} <- check_payload_params(params),
-         {:ok, event} <- validate_event_headers(conn) do
-      process_event(event, conn, payload)
+         {:ok, event_name} <- validate_event_headers(conn) do
+      event_name
+      |> extract_job_attrs(payload)
+      |> process_event(conn)
     end
   end
 
-  defp process_event("ping", conn, _payload) do
-    conn
-    |> json(%{message: "pong"})
+  defp extract_job_attrs("push", payload) do
+    slug = get_in(payload, ["repository", "full_name"])
+    branch_name = get_in(payload, ["ref"])
+    commit_sha = get_in(payload, ["after"])
+
+    %{slug: slug, branch_name: branch_name, commit_sha: commit_sha}
   end
 
-  defp process_event("pull_request", conn, payload) do
+  defp extract_job_attrs("pull_request", payload) do
     # data is fetched from sender's repository refered as "head"
-    pr_data = get_in(payload, ["pull_request", "head"])
+    slug = get_in(payload, ["pull_request", "head", "repo", "full_name"])
+    branch_name = get_in(payload, ["pull_request", "head", "ref"])
+    commit_sha = get_in(payload, ["pull_request", "head", "sha"])
 
-    slug = get_in(pr_data, ["repo", "full_name"])
-    branch_name = get_in(pr_data, ["ref"])
-    commit_sha = get_in(pr_data, ["sha"])
+    %{slug: slug, branch_name: branch_name, commit_sha: commit_sha}
+  end
+
+  defp extract_job_attrs(event, _payload), do: event
+
+  defp process_event(job_data, conn) when is_map(job_data) do
+    %{slug: slug, branch_name: branch_name, commit_sha: commit_sha} = job_data
 
     with {:ok, %Repos.Repo{} = repo} <- Repos.fetch_repo_by_slug(slug),
          {:ok, job} <-
@@ -32,13 +43,18 @@ defmodule ElixirBenchWeb.Github.WebHooks do
       conn
       |> render(ElixirBenchWeb.JobView, "show.json", job: job, repo: repo)
     else
-      {:error, :invalid_slug} -> {:error, :bad_request}
+      {:error, error} -> handle_errors({:error, error})
     end
   end
 
-  defp process_event("push", conn, payload) do
-    conn
-    |> json(%{event: "push", content: payload})
+  defp process_event(job_data, conn) do
+    case job_data do
+      "ping" ->
+        json(conn, %{message: "pong"})
+
+      _ ->
+        handle_errors({:error, :unprocessable_entity})
+    end
   end
 
   defp check_payload_params(params) do
@@ -47,11 +63,11 @@ defmodule ElixirBenchWeb.Github.WebHooks do
         {:ok, payload} ->
           {:ok, payload}
 
-        {:error, _} ->
-          {:error, :bad_request}
+        {:error, reason} ->
+          handle_errors({:error, reason})
       end
     else
-      {:error, :bad_request}
+      handle_errors({:error, :bad_request})
     end
   end
 
@@ -60,7 +76,20 @@ defmodule ElixirBenchWeb.Github.WebHooks do
          true <- event in @accepted_events do
       {:ok, event}
     else
-      _ -> {:error, :unprocessable_entity}
+      _ -> handle_errors({:error, :unprocessable_entity})
+    end
+  end
+
+  defp handle_errors(errors) do
+    case errors do
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, changeset}
+
+      {:error, :unprocessable_entity} ->
+        {:error, :unprocessable_entity}
+
+      _ ->
+        {:error, :bad_request}
     end
   end
 end
