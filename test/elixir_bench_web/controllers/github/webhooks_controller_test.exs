@@ -1,4 +1,4 @@
-defmodule ElixirBenchWeb.WebHooksControllerTest do
+defmodule ElixirBenchWeb.Github.WebHooksControllerTest do
   use ElixirBenchWeb.ConnCase, async: false
 
   import ElixirBenchWeb.TestHelpers

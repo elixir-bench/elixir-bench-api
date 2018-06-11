@@ -21,7 +21,7 @@ defmodule ElixirBenchWeb.Router do
   scope "/hooks", ElixirBenchWeb do
     pipe_through [:api]
 
-    post("/handle", WebHooks, :handle)
+    post("/handle", Github.WebHooks, :handle)
   end
 
   scope "/api" do
