@@ -19,7 +19,7 @@ defmodule ElixirBenchWeb.Github.WebHooks do
   end
 
   defp process_event("pull_request", conn, payload) do
-    # data is fetched from sender's repository
+    # data is fetched from sender's repository refered as "head"
     pr_data = get_in(payload, ["pull_request", "head"])
 
     slug = get_in(pr_data, ["repo", "full_name"])
@@ -31,6 +31,8 @@ defmodule ElixirBenchWeb.Github.WebHooks do
            Benchmarks.create_job(repo, %{branch_name: branch_name, commit_sha: commit_sha}) do
       conn
       |> render(ElixirBenchWeb.JobView, "show.json", job: job, repo: repo)
+    else
+      {:error, :invalid_slug} -> {:error, :bad_request}
     end
   end
 
@@ -54,11 +56,11 @@ defmodule ElixirBenchWeb.Github.WebHooks do
   end
 
   defp validate_event_headers(conn) do
-    [event] = get_req_header(conn, "x-github-event")
-
-    case event in @accepted_events do
-      true -> {:ok, event}
-      false -> {:error, :unprocessable_entity}
+    with [event] <- get_req_header(conn, "x-github-event"),
+         true <- event in @accepted_events do
+      {:ok, event}
+    else
+      _ -> {:error, :unprocessable_entity}
     end
   end
 end
