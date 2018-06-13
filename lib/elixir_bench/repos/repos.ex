@@ -48,6 +48,8 @@ defmodule ElixirBench.Repos do
     Repo.delete(repo)
   end
 
+  defp parse_slug(slug, callback) when is_nil(slug), do: {:error, :invalid_slug}
+
   defp parse_slug(slug, callback) do
     case String.split(slug, "/", trim: true, parts: 2) do
       [owner, name] -> callback.(owner, name)

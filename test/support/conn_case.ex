@@ -21,6 +21,7 @@ defmodule ElixirBenchWeb.ConnCase do
       use Phoenix.ConnTest
       import ElixirBenchWeb.Router.Helpers
       import ElixirBench.Factory
+      import ElixirBench.GithubFactory
 
       # The default endpoint for testing
       @endpoint ElixirBenchWeb.Endpoint

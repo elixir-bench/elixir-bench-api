@@ -65,4 +65,10 @@ defmodule ElixirBenchWeb.TestHelpers do
   defp required_field_message_in_string?(field, response) do
     response =~ ~r/In argument \\\"#{field}\\\": Expected type .*, found null/
   end
+
+  def decode_response_body(response) do
+    response
+    |> Map.get(:resp_body)
+    |> Antidote.decode()
+  end
 end
