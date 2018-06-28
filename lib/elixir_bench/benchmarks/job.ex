@@ -2,6 +2,7 @@ defmodule ElixirBench.Benchmarks.Job do
   use Ecto.Schema
 
   import Ecto.Changeset
+  import Ecto.Query, only: [from: 1, from: 2]
 
   alias ElixirBench.Repos
   alias ElixirBench.Benchmarks.{Runner, Job, Config}
@@ -65,5 +66,9 @@ defmodule ElixirBench.Benchmarks.Job do
     |> cast(attrs, @submit_fields)
     |> validate_required(@submit_fields)
     |> put_change(:completed_at, DateTime.utc_now())
+  end
+
+  def unfinished(query) do
+    from(j in query, where: is_nil(j.completed_at))
   end
 end

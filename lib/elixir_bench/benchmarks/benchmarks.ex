@@ -51,6 +51,16 @@ defmodule ElixirBench.Benchmarks do
     Repo.fetch(where(Job, uuid: ^uuid))
   end
 
+  def fetch_running_job_by_reference(branch_name, commit_sha) do
+    query =
+      Job
+      |> last
+      |> Job.unfinished()
+      |> where(branch_name: ^branch_name, commit_sha: ^commit_sha)
+
+    Repo.fetch(query)
+  end
+
   def list_benchmarks_by_repo_id(repo_ids) do
     Repo.all(from(b in Benchmark, where: b.repo_id in ^repo_ids))
   end
@@ -61,6 +71,18 @@ defmodule ElixirBench.Benchmarks do
 
   def list_jobs() do
     Repo.all(Job)
+  end
+
+  def get_or_create_job(repo, attrs) do
+    %{branch_name: branch_name, commit_sha: commit_sha} = attrs
+
+    case fetch_running_job_by_reference(branch_name, commit_sha) do
+      {:ok, job} ->
+        {:ok, job}
+
+      {:error, :not_found} ->
+        create_job(repo, attrs)
+    end
   end
 
   def create_job(repo, attrs) do

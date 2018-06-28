@@ -90,6 +90,30 @@ defmodule ElixirBenchWeb.Github.WebHooksControllerTest do
       assert 200 = response.status
     end
 
+    # This scenario happens when there is a branch with an open pull request
+    # So Github sends requests for both events, pull request and push.
+    test "not duplicate job for same branch and commit references", context do
+      insert(:repo, @github_repo_attrs)
+      push_params = %{"payload" => push_payload()}
+      pull_request = %{"payload" => pull_request_payload()}
+
+      assert_difference(Job, 1) do
+        {:ok, %{"data" => data}} =
+          context.conn
+          |> set_headers("pull_request")
+          |> post("/hooks/handle", pull_request)
+          |> decode_response_body
+
+        {:ok, %{"data" => ^data}} =
+          context.conn
+          |> set_headers("push")
+          |> post("/hooks/handle", push_params)
+          |> decode_response_body
+      end
+
+      assert %{"branch_name" => "changes", "repo_slug" => "baxterthehacker/public-repo"} = data
+    end
+
     test "not break given unexpected pull request event payload scheme", context do
       insert(:repo, @github_repo_attrs)
       params = %{"payload" => ~s({"data": "some data"})}

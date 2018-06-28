@@ -45,7 +45,7 @@ defmodule ElixirBenchWeb.Github.WebHooks do
 
     with {:ok, %Repos.Repo{} = repo} <- Repos.fetch_repo_by_slug(slug),
          {:ok, job} <-
-           Benchmarks.create_job(repo, %{branch_name: branch_name, commit_sha: commit_sha}) do
+           Benchmarks.get_or_create_job(repo, %{branch_name: branch_name, commit_sha: commit_sha}) do
       conn
       |> render(ElixirBenchWeb.JobView, "show.json", job: job, repo: repo)
     else
