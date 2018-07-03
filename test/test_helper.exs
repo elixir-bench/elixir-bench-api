@@ -69,6 +69,6 @@ defmodule ElixirBenchWeb.TestHelpers do
   def decode_response_body(response) do
     response
     |> Map.get(:resp_body)
-    |> Antidote.decode()
+    |> Jason.decode()
   end
 end
