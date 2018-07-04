@@ -38,7 +38,7 @@ defmodule ElixirBenchWeb.Router do
         assign(conn, :runner, runner)
 
       {:error, _reason} ->
-        send_resp(conn, :unauthorized, Antidote.encode!(%{error: "unauthorized"}))
+        send_resp(conn, :unauthorized, Jason.encode!(%{error: "unauthorized"}))
     end
   end
 end

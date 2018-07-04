@@ -55,7 +55,7 @@ defmodule ElixirBench.Mixfile do
       {:distillery, "~> 1.5"},
       {:bcrypt_elixir, "~> 1.0"},
       {:hackney, "~> 1.10"},
-      {:antidote, github: "michalmuskala/antidote"},
+      {:jason, "~> 1.1"},
       {:yamerl, "~> 0.6.0"},
       {:confex, "~> 3.3"},
       {:excoveralls, "~> 0.8", only: :test},

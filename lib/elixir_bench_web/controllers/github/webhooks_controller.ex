@@ -59,7 +59,7 @@ defmodule ElixirBenchWeb.Github.WebHooks do
 
   defp check_payload_params(params) do
     if p = params["payload"] do
-      case Antidote.decode(p) do
+      case Jason.decode(p) do
         {:ok, payload} ->
           {:ok, payload}
 
