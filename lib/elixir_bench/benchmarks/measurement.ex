@@ -52,10 +52,15 @@ defmodule ElixirBench.Benchmarks.Measurement do
   defp set_mode(changeset, attrs) do
     mode = get_in(attrs, ["mode"])
 
-    if is_integer(mode) or is_float(mode) do
-      change(changeset, mode: [mode])
-    else
-      changeset
-    end
+    mode =
+      cond do
+        is_integer(mode) or is_float(mode) ->
+          [mode]
+
+        true ->
+          mode
+      end
+
+    cast(changeset, %{mode: mode}, [:mode])
   end
 end
