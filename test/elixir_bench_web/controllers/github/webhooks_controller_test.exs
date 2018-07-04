@@ -42,6 +42,44 @@ defmodule ElixirBenchWeb.Github.WebHooksControllerTest do
       assert %{"branch_name" => "changes", "repo_slug" => "baxterthehacker/public-repo"} = data
     end
 
+    test "validate branch ref name in push events", context do
+      insert(:repo, @github_repo_attrs)
+
+      payload = push_payload() |> Jason.decode!()
+
+      refs_head = %{payload | "ref" => "refs/heads/mybranch"}
+      empty_string = %{payload | "ref" => ""}
+      nil_value = %{payload | "ref" => nil}
+
+      assert_difference(Repo, 0) do
+        assert_difference(Job, 1) do
+          {:ok, %{"data" => data}} =
+            context.conn
+            |> set_headers("push")
+            |> post("/hooks/handle", %{"payload" => Jason.encode!(refs_head)})
+            |> decode_response_body
+        end
+      end
+
+      assert %{"branch_name" => "mybranch", "repo_slug" => "baxterthehacker/public-repo"} = data
+
+      {:ok, %{"errors" => errors}} =
+        context.conn
+        |> set_headers("push")
+        |> post("/hooks/handle", %{"payload" => Jason.encode!(empty_string)})
+        |> decode_response_body
+
+      assert %{"branch_name" => ["can't be blank"]} = errors
+
+      {:ok, %{"errors" => errors}} =
+        context.conn
+        |> set_headers("push")
+        |> post("/hooks/handle", %{"payload" => Jason.encode!(nil_value)})
+        |> decode_response_body
+
+      assert %{"branch_name" => ["can't be blank"]} = errors
+    end
+
     test "respond to ping event", context do
       response =
         context.conn

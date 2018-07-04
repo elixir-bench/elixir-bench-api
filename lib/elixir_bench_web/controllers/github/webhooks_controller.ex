@@ -22,6 +22,7 @@ defmodule ElixirBenchWeb.Github.WebHooks do
     branch_name =
       case get_in(payload, ["ref"]) do
         nil -> nil
+        "" -> nil
         name -> String.replace(name, "refs/heads/", "")
       end
 
