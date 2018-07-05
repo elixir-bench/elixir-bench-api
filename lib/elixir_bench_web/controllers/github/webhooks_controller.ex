@@ -17,8 +17,14 @@ defmodule ElixirBenchWeb.Github.WebHooks do
 
   defp extract_job_attrs("push", payload) do
     slug = get_in(payload, ["repository", "full_name"])
-    branch_name = get_in(payload, ["ref"])
     commit_sha = get_in(payload, ["after"])
+
+    branch_name =
+      case get_in(payload, ["ref"]) do
+        nil -> nil
+        "" -> nil
+        name -> String.replace(name, "refs/heads/", "")
+      end
 
     %{slug: slug, branch_name: branch_name, commit_sha: commit_sha}
   end
@@ -26,8 +32,8 @@ defmodule ElixirBenchWeb.Github.WebHooks do
   defp extract_job_attrs("pull_request", payload) do
     # data is fetched from sender's repository refered as "head"
     slug = get_in(payload, ["pull_request", "head", "repo", "full_name"])
-    branch_name = get_in(payload, ["pull_request", "head", "ref"])
     commit_sha = get_in(payload, ["pull_request", "head", "sha"])
+    branch_name = get_in(payload, ["pull_request", "head", "ref"])
 
     %{slug: slug, branch_name: branch_name, commit_sha: commit_sha}
   end
