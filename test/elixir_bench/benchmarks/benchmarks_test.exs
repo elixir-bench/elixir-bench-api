@@ -101,15 +101,79 @@ defmodule ElixirBench.BenchmarksTest do
     end
   end
 
+  describe "get_or_create_job/2" do
+    test "insert new jobs if no job exist for a given commit-sha and repo" do
+      repo = insert(:repo)
+
+      assert_difference(Job, 2) do
+        assert {:ok, job} =
+                 Benchmarks.get_or_create_job(repo, %{
+                   branch_name: "master",
+                   commit_sha: "ABC123"
+                 })
+
+        assert {:ok, _other_job} =
+                 Benchmarks.get_or_create_job(repo, %{
+                   branch_name: "master",
+                   commit_sha: "dingdong"
+                 })
+      end
+
+      assert %Job{branch_name: "master", commit_sha: "ABC123"} = job
+    end
+
+    test "return existent job for a given commit-sha and repo" do
+      repo = insert(:repo)
+
+      %{id: id, uuid: uuid} =
+        insert(:job, %{repo: repo, branch_name: "master", commit_sha: "ABC123"})
+
+      assert_difference(Job, 0) do
+        assert {:ok, job} =
+                 Benchmarks.get_or_create_job(repo, %{
+                   branch_name: "ignored",
+                   commit_sha: "ABC123"
+                 })
+      end
+
+      assert %{id: ^id, uuid: ^uuid, commit_sha: "ABC123"} = job
+    end
+
+    test "insert new job if exists a job with same commit-sha but its from another repo" do
+      repo = insert(:repo)
+      other_repo = insert(:repo)
+
+      assert_difference(Job, 2) do
+        assert {:ok, job} =
+                 Benchmarks.get_or_create_job(repo, %{
+                   branch_name: "master",
+                   commit_sha: "ABC123"
+                 })
+
+        assert {:ok, other_job} =
+                 Benchmarks.get_or_create_job(other_repo, %{
+                   branch_name: "master",
+                   commit_sha: "ABC123"
+                 })
+      end
+
+      assert %Job{branch_name: "master", commit_sha: "ABC123"} = job
+      assert %Job{branch_name: "master", commit_sha: "ABC123"} = other_job
+    end
+  end
+
   describe "create_job/2" do
-    test "insert new Job given correct params" do
+    test "insert new job given correct params" do
       repo = insert(:repo)
 
       assert_difference(Job, 1) do
         assert {:ok, job} =
-                 Benchmarks.create_job(repo, %{branch_name: "mm/benchee", commit_sha: "ABC123"})
+                 Benchmarks.create_job(repo, %{
+                   branch_name: "master",
+                   commit_sha: "ABC123"
+                 })
 
-        assert %Job{branch_name: "mm/benchee", commit_sha: "ABC123"} = job
+        assert %Job{branch_name: "master", commit_sha: "ABC123"} = job
       end
     end
 
@@ -171,7 +235,7 @@ defmodule ElixirBench.BenchmarksTest do
       assert @samples_count == ElixirBench.Repo.aggregate(query, :count, :id)
     end
 
-    test "do not duplicata benchmark in multiple runs" do
+    test "do not duplicate benchmark in multiple runs" do
       job = insert(:job)
 
       assert_difference(Benchmarks.Benchmark, 4) do
