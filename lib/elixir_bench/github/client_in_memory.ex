@@ -14,10 +14,12 @@ defmodule ElixirBench.Github.ClientInMemory do
          "docker" => [
            %{
              "container_name" => "postgres",
+             "wait" => %{port: "123"},
              "image" => "postgres:9.6.6-alpine"
            },
            %{
              "container_name" => "mysql",
+             "wait" => %{port: "321"},
              "environment" => %{
                "MYSQL_ALLOW_EMPTY_PASSWORD" => "true"
              },

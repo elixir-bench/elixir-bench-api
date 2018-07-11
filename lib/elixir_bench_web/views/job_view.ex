@@ -34,11 +34,14 @@ defmodule ElixirBenchWeb.JobView do
 
   defp render_docker(nil), do: []
 
-  def render_each_docker(docker) do
+  defp render_each_docker(docker) do
     %{
       image: docker.image,
       environment: docker.environment,
-      container_name: docker.container_name
+      container_name: docker.container_name,
+      wait: %{
+        port: docker.wait.port
+      }
     }
   end
 end

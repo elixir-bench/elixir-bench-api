@@ -15,6 +15,10 @@ defmodule ElixirBench.Benchmarks.Config do
       embeds_many :docker, Docker, primary_key: {:image, :string, []} do
         field :container_name, :string
         field :environment, {:map, :string}, default: %{}
+
+        embeds_one :wait, Wait, primary_key: false do
+          field :port, :integer
+        end
       end
     end
   end
@@ -40,5 +44,12 @@ defmodule ElixirBench.Benchmarks.Config do
     docker
     |> cast(attrs, [:image, :container_name, :environment])
     |> validate_required([:image])
+    |> cast_embed(:wait, with: &wait_changeset/2, required: true)
+  end
+
+  defp wait_changeset(wait, attrs) do
+    wait
+    |> cast(attrs, [:port])
+    |> validate_required([:port])
   end
 end
