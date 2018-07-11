@@ -49,6 +49,7 @@ defmodule ElixirBench.Benchmarks.Measurement do
     |> set_mode(attrs)
   end
 
+  # Benchee can return a uniq value for mode so we need to make it an array
   defp set_mode(changeset, attrs) do
     mode = get_in(attrs, ["mode"])
 

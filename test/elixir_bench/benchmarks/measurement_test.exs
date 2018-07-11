@@ -18,26 +18,6 @@ defmodule MeasurementTest do
   }
 
   describe "changeset/2" do
-    test "cast required fields" do
-      changeset = Measurement.changeset(%Measurement{}, @attrs)
-
-      assert changeset.valid?
-
-      assert [
-               :average,
-               :ips,
-               :maximum,
-               :median,
-               :minimum,
-               :percentiles,
-               :run_times,
-               :sample_size,
-               :std_dev,
-               :std_dev_ips,
-               :std_dev_ratio
-             ] = Map.keys(changeset.changes)
-    end
-
     test "format and validade mode values" do
       changeset = Measurement.changeset(%Measurement{}, %{@attrs | "mode" => ""})
 
