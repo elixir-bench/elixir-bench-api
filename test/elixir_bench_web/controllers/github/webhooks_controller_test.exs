@@ -47,21 +47,9 @@ defmodule ElixirBenchWeb.Github.WebHooksControllerTest do
 
       payload = push_payload() |> Jason.decode!()
 
-      refs_head = %{payload | "ref" => "refs/heads/mybranch"}
       empty_string = %{payload | "ref" => ""}
       nil_value = %{payload | "ref" => nil}
-
-      assert_difference(Repo, 0) do
-        assert_difference(Job, 1) do
-          {:ok, %{"data" => data}} =
-            context.conn
-            |> set_headers("push")
-            |> post("/hooks/handle", %{"payload" => Jason.encode!(refs_head)})
-            |> decode_response_body
-        end
-      end
-
-      assert %{"branch_name" => "mybranch", "repo_slug" => "baxterthehacker/public-repo"} = data
+      refs_head = %{payload | "ref" => "refs/heads/mybranch"}
 
       {:ok, %{"errors" => errors}} =
         context.conn
@@ -78,6 +66,18 @@ defmodule ElixirBenchWeb.Github.WebHooksControllerTest do
         |> decode_response_body
 
       assert %{"branch_name" => ["can't be blank"]} = errors
+
+      assert_difference(Repo, 0) do
+        assert_difference(Job, 1) do
+          {:ok, %{"data" => data}} =
+            context.conn
+            |> set_headers("push")
+            |> post("/hooks/handle", %{"payload" => Jason.encode!(refs_head)})
+            |> decode_response_body
+        end
+      end
+
+      assert %{"branch_name" => "mybranch", "repo_slug" => "baxterthehacker/public-repo"} = data
     end
 
     test "respond to ping event", context do
