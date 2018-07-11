@@ -56,6 +56,7 @@ defmodule ElixirBench.Benchmarks do
       Job
       |> Job.filter_by_repo(repo.id)
       |> where(commit_sha: ^commit_sha)
+      |> last()
 
     Repo.fetch(query)
   end

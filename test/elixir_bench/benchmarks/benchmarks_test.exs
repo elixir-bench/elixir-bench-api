@@ -122,21 +122,20 @@ defmodule ElixirBench.BenchmarksTest do
       assert %Job{branch_name: "master", commit_sha: "ABC123"} = job
     end
 
-    test "return existent job for a given commit-sha and repo" do
+    test "return last existent job for a given commit-sha and repo" do
       repo = insert(:repo)
+      attrs = %{repo: repo, branch_name: "master", commit_sha: "ABC123"}
 
-      %{id: id, uuid: uuid} =
-        insert(:job, %{repo: repo, branch_name: "master", commit_sha: "ABC123"})
+      %{id: id} = insert(:job, attrs)
+      %{id: id2} = insert(:job, attrs)
+
+      refute id == id2
 
       assert_difference(Job, 0) do
-        assert {:ok, job} =
-                 Benchmarks.get_or_create_job(repo, %{
-                   branch_name: "ignored",
-                   commit_sha: "ABC123"
-                 })
+        assert {:ok, job} = Benchmarks.get_or_create_job(repo, attrs)
       end
 
-      assert %{id: ^id, uuid: ^uuid, commit_sha: "ABC123"} = job
+      assert %{id: ^id2, commit_sha: "ABC123"} = job
     end
 
     test "insert new job if exists a job with same commit-sha but its from another repo" do
