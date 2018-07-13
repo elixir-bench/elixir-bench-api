@@ -99,7 +99,7 @@ defmodule ElixirBenchWeb.Schema.ContentTypes do
     field :sample_size, :integer
     field :percentiles, list_of(:percentile), resolve: map_to_list(:percentiles, :name, :value)
 
-    field :mode, :float
+    field :mode, list_of(:float)
     field :minimum, :float
     field :median, :float
     field :maximum, :float

@@ -8,7 +8,7 @@ defmodule ElixirBench.Benchmarks.Measurement do
     belongs_to(:job, Job)
 
     field :sample_size, :integer
-    field :mode, :float
+    field :mode, {:array, :float}
     field :minimum, :float
     field :median, :float
     field :maximum, :float
@@ -27,7 +27,6 @@ defmodule ElixirBench.Benchmarks.Measurement do
 
   @fields [
     :sample_size,
-    :mode,
     :minimum,
     :median,
     :maximum,
@@ -40,10 +39,29 @@ defmodule ElixirBench.Benchmarks.Measurement do
     :percentiles
   ]
 
+  @required_fields @fields -- [:mode]
+
   @doc false
   def changeset(%Measurement{} = measurement, attrs) do
     measurement
     |> cast(attrs, @fields)
-    |> validate_required(@fields)
+    |> validate_required(@required_fields)
+    |> set_mode(attrs)
+  end
+
+  # Benchee can return a uniq value for mode so we need to make it an array
+  defp set_mode(changeset, attrs) do
+    mode = get_in(attrs, ["mode"])
+
+    mode =
+      cond do
+        is_integer(mode) or is_float(mode) ->
+          [mode]
+
+        true ->
+          mode
+      end
+
+    cast(changeset, %{mode: mode}, [:mode])
   end
 end
