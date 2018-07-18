@@ -35,7 +35,6 @@ defmodule ElixirBench.Benchmarks.Measurement do
     :std_dev_ratio,
     :ips,
     :std_dev_ips,
-    :run_times,
     :percentiles
   ]
 
