@@ -5,13 +5,12 @@ defmodule ElixirBenchWeb.JobControllerTest do
 
   describe "claim/2" do
     test "respond 404 when there is no job to be claimed", context do
-      {:ok, %{"errors" => errors}} =
+      conn =
         context.conn
         |> authenticate!
         |> post("/runner-api/jobs/claim", %{})
-        |> decode_response_body
 
-      assert %{"detail" => "Page not found"} = errors
+      assert response(conn, 404) =~ "Page not found"
     end
 
     test "return job data when claimed with success", context do

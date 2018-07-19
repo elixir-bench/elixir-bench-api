@@ -29,8 +29,16 @@ defmodule ElixirBench.Benchmarks.Config do
 
     config
     |> cast(attrs, [:elixir, :erlang, :environment])
-    |> validate_inclusion(:elixir, supported_elixir_version)
-    |> validate_inclusion(:erlang, supported_erlang_version)
+    |> validate_inclusion(
+      :elixir,
+      supported_elixir_version,
+      message: "elixir version not supported"
+    )
+    |> validate_inclusion(
+      :erlang,
+      supported_erlang_version,
+      message: "erlang version not supported"
+    )
     |> cast_embed(:deps, with: &deps_changeset/2)
   end
 

@@ -19,7 +19,7 @@ defmodule ConfigTest do
       assert changeset.valid?
     end
 
-    test "return error if elixir and erlang errors are not supported" do
+    test "return unsupported versions error if elixir and erlang are not supported" do
       supported_elixir = Confex.fetch_env!(:elixir_bench, :supported_elixir_versions)
       supported_erlang = Confex.fetch_env!(:elixir_bench, :supported_erlang_versions)
 
@@ -28,7 +28,9 @@ defmodule ConfigTest do
 
       changeset = Config.changeset(%Config{}, %{elixir: "99", erlang: "99"})
       refute changeset.valid?
-      assert %{elixir: ["is invalid"], erlang: ["is invalid"]} = errors_on(changeset)
+
+      assert %{elixir: ["elixir version not supported"], erlang: ["erlang version not supported"]} =
+               errors_on(changeset)
 
       supported_elixir = hd(supported_elixir)
       supported_erlang = hd(supported_erlang)
