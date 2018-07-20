@@ -30,7 +30,6 @@ data = %{
       "std_dev" => 209.33476197004862,
       "std_dev_ips" => 1351.5088377210595,
       "std_dev_ratio" => 0.5319001605985423,
-      "run_times" => []
     },
     "insert_mysql/insert_changeset" => %{
       "average" => 450.2023723288664,
@@ -44,7 +43,6 @@ data = %{
       "std_dev" => 573.9417528830307,
       "std_dev_ips" => 2831.732735787863,
       "std_dev_ratio" => 1.274852795453007,
-      "run_times" => []
     },
     "insert_pg/insert_plain" => %{
       "average" => 473.0912894636744,
@@ -58,7 +56,6 @@ data = %{
       "std_dev" => 273.63253429178945,
       "std_dev_ips" => 1222.5815257169884,
       "std_dev_ratio" => 0.5783926704759165,
-      "run_times" => []
     },
     "insert_pg/insert_changeset" => %{
       "average" => 465.8669101807624,
@@ -72,7 +69,6 @@ data = %{
       "std_dev" => 199.60367678670747,
       "std_dev_ips" => 919.6970816229071,
       "std_dev_ratio" => 0.4284564377179282,
-      "run_times" => []
     }
   }
 }
