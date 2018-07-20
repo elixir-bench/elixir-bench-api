@@ -2,7 +2,8 @@ defmodule ElixirBench.Factory do
   use ExMachina.Ecto, repo: ElixirBench.Repo
 
   alias ElixirBench.Repos
-  alias ElixirBench.Benchmarks.{Benchmark, Measurement, Job, Runner}
+  alias ElixirBench.Benchmarks.{Benchmark, Measurement, Job, Runner, Config}
+  alias Config.{Dep, Dep.Docker, Dep.Docker.Wait}
 
   def runner_factory do
     %Runner{
@@ -35,8 +36,31 @@ defmodule ElixirBench.Factory do
       elixir_version: "1.5.2",
       erlang_version: "20.1",
       repo: build(:repo),
-      uuid: Ecto.UUID.generate()
+      uuid: Ecto.UUID.generate(),
+      config: build(:config)
     }
+  end
+
+  def config_factory do
+    %Config{
+      elixir: "1.5.2",
+      erlang: "20.1"
+    }
+  end
+
+  def with_docker_deps(%Job{} = job) do
+    deps = %Dep{
+      docker: [
+        %Docker{
+          container_name: "postgres",
+          image: "postgres:9.6.6-alpine",
+          wait: %Wait{port: 5432},
+          environment: %{"MYSQL_ALLOW_EMPTY_PASSWORD" => "true"}
+        }
+      ]
+    }
+
+    %{job | config: %{job.config | deps: deps}}
   end
 
   def measurement_factory do
