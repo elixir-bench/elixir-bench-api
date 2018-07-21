@@ -109,8 +109,6 @@ defmodule ElixirBenchWeb.Schema.ContentTypes do
 
     field :ips, :float
     field :std_dev_ips, :integer
-
-    field :run_times, list_of(:float)
   end
 
   object :percentile do

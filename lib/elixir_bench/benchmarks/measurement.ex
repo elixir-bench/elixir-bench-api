@@ -19,7 +19,6 @@ defmodule ElixirBench.Benchmarks.Measurement do
     field :ips, :float
     field :std_dev_ips, :float
 
-    field :run_times, {:array, :float}
     field :percentiles, {:map, :float}
 
     timestamps(type: :utc_datetime)
@@ -35,7 +34,6 @@ defmodule ElixirBench.Benchmarks.Measurement do
     :std_dev_ratio,
     :ips,
     :std_dev_ips,
-    :run_times,
     :percentiles
   ]
 
