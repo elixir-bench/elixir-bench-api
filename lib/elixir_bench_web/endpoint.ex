@@ -30,7 +30,7 @@ defmodule ElixirBenchWeb.Endpoint do
 
   plug Corsica,
     max_age: 600,
-    origins: [~r/localhost:\d+$/, ~r/elixirbench.org$/],
+    origins: [~r/localhost:\d+$/, ~r/elixirbench.org$/, ~r/tallysmartins.github.io$/],
     allow_headers: ~w(accept content-type origin)
 
   plug ElixirBenchWeb.Router
