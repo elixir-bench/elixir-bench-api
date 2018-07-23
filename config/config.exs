@@ -8,13 +8,6 @@ use Mix.Config
 # General application configuration
 config :elixir_bench, ecto_repos: [ElixirBench.Repo]
 
-# Configures the endpoint
-config :elixir_bench, ElixirBenchWeb.Endpoint,
-  url: [host: "localhost"],
-  secret_key_base: "T3V6SzBeO9ItbppdTUPuT/RK11O21rhBDKBcklh/0l58bD16hKRC1RzXMapYv1wy",
-  render_errors: [view: ElixirBenchWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: ElixirBench.PubSub, adapter: Phoenix.PubSub.PG2]
-
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
