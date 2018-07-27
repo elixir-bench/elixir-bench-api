@@ -16,13 +16,7 @@ use Mix.Config
 config :elixir_bench, ElixirBenchWeb.Endpoint,
   # Dynamically verify and set Endpoint env variables
   load_from_system_env: true,
-  http: [
-    protocol_options: [
-      max_header_name_length: 640,
-      max_header_value_length: 8192,
-      max_headers: 100
-    ]
-  ],
+  http: [],
   server: true,
   url: [host: "elixirbench.org", port: 80],
   secret_key_base: "${SECRET_KEY_BASE}"
