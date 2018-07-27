@@ -32,7 +32,40 @@ Now you can visit [`localhost:4000/api/graphiql`](http://localhost:4000/api/grap
 
 ## Deployment
 
-To build the release you can use `mix release`. The relese requires a `PORT` environment variable.
+This project uses `distillery` for deployments. The relese requires `PORT` and
+`DATABASE_URL` environment variables. Built releases are placed under `_build/prod/rel/elixir_bench`
+directory
+
+```
+$ MIX_ENV=prod mix release --env=prod
+```
+
+Start the application passing the required variables
+
+```
+DATABASE_URL="postgresql://user:password@localhost:5432/elixir_bench_dev" PORT=4000 _build/prod/rel/elixir_bench/bin/elixir_bench foreground
+```
+
+**PS:** If you try to build a release with an environment other than prod, **IT WILL FAIL**
+as development and test environments rely on Mix wich is not shipped within the releases and
+require substantial changes to work.
+
+## Deploy on Gigalixir
+
+This project ships the configuration needed to deploy on [Gigalixir](https://gigalixir.com), a Heroku like
+service. To make a deploy on Gigalixir you will have to follow this simple guide and refer
+to the documentation for further information, see [Getting Started](https://gigalixir.readthedocs.io/en/latest/main.html#getting-started-guide)
+
+- Install the Gigalixir CLI, all steps are performed through it
+- Create an account and login
+- Create an app and give it a name
+- Add a database to your app
+- Push your code to gigalixir and see the magic happening
+
+**This project uses the `uuid-ossp extension` from postgresql which is added
+in `priv/repo/migrations/20171210214237_add_uuid_to_job.exs`. Gigalixir does not
+allow any extensions in the free tier plan, so a workaround is to remove it from
+the migration to not use this extension or drop a few bucks :)**
 
 ## License
 
