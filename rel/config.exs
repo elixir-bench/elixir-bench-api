@@ -39,6 +39,11 @@ environment :prod do
   set cookie: :"?HJ`Ukk;))_nwy4>j>@bPXc6oNSZ==ivI9kF96,63D)S]lkI~tT^NJL]TN@Or5*4"
 end
 
+environment :staging do
+  set include_erts: true
+  set include_src: false
+end
+
 # You may define one or more releases in this file.
 # If you have not set a default release, or selected one
 # when running `mix release`, the first release in the file
