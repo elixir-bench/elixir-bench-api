@@ -28,9 +28,14 @@ defmodule ElixirBenchWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
 
+  allowed_origins =
+    :elixir_bench
+    |> Application.get_env(ElixirBenchWeb.Endpoint, [])
+    |> Keyword.get(:origins, [])
+
   plug Corsica,
     max_age: 600,
-    origins: [~r/localhost:\d+$/, ~r/elixirbench.org$/],
+    origins: [~r/localhost:\d+$/, ~r/elixirbench.org$/] ++ allowed_origins,
     allow_headers: ~w(accept content-type origin)
 
   plug ElixirBenchWeb.Router

@@ -8,7 +8,7 @@ defmodule ElixirBench.Mixfile do
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix] ++ Mix.compilers(),
-      start_permanent: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod || Mix.env() == :staging,
       aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
