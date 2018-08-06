@@ -32,11 +32,14 @@ defmodule ConfigTest do
       assert %{elixir: ["elixir version not supported"], erlang: ["erlang version not supported"]} =
                errors_on(changeset)
 
-      supported_elixir = hd(supported_elixir)
-      supported_erlang = hd(supported_erlang)
+      some_supported_elixir = hd(supported_elixir)
+      some_supported_erlang = hd(supported_erlang)
 
       changeset =
-        Config.changeset(%Config{}, %{elixir: supported_elixir, erlang: supported_erlang})
+        Config.changeset(%Config{}, %{
+          elixir: some_supported_elixir,
+          erlang: some_supported_erlang
+        })
 
       assert changeset.valid?
     end
@@ -115,6 +118,14 @@ defmodule ConfigTest do
 
       refute changeset.valid?
       assert %{deps: %{docker: [%{wait: %{port: ["can't be blank"]}}]}} = errors_on(changeset)
+    end
+
+    test "return error if more than one docker deps with same image is given" do
+      docker_deps = [%{image: "pg"}, %{image: "pg"}]
+      changeset = Config.changeset(%Config{}, %{deps: %{docker: docker_deps}})
+
+      refute changeset.valid?
+      assert %{deps: %{docker: [_, %{image: ["has already been taken"]}]}} = errors_on(changeset)
     end
 
     test "ignore non docker deps" do
