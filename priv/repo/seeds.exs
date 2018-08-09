@@ -17,6 +17,7 @@ data = %{
   "log" => """
   [now] Oh how ward it was to run this benchmark!
   """,
+  "exit_status" => 0,
   "measurements" => %{
     "insert_mysql/insert_plain" => %{
       "average" => 393.560253365004,

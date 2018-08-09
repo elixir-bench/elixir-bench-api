@@ -35,6 +35,7 @@ defmodule ElixirBenchWeb.Schema.ContentTypes do
     field :claimed_at, :datetime
     field :completed_at, :datetime
     field :log, :string
+    field :exit_status, :integer
 
     field :repo_slug, :string do
       resolve(fn %{repo_id: repo_id}, _, %{context: %{loader: loader}} ->
