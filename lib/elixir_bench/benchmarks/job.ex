@@ -15,6 +15,7 @@ defmodule ElixirBench.Benchmarks.Job do
     field :claimed_at, :utc_datetime
     field :completed_at, :utc_datetime
     field :log, :string
+    field :exit_status, :integer
 
     field :branch_name, :string
     field :commit_message, :string
@@ -41,7 +42,8 @@ defmodule ElixirBench.Benchmarks.Job do
     :cpu_count,
     # TODO: change to a string memory
     # :memory_mb,
-    :log
+    :log,
+    :exit_status
   ]
 
   @create_fields [

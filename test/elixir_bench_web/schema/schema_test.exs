@@ -394,18 +394,20 @@ defmodule ElixirBenchWeb.SchemaTest do
 
   describe "job query" do
     test "fetch job by id", context do
-      job = insert(:job)
+      job = insert(:job, %{exit_status: 1})
 
       query = """
         job (id: "#{job.id}") {
-          id
+          id,
+          exit_status
         }
       """
 
       json_data = %{
         "data" => %{
           "job" => %{
-            "id" => "#{job.id}"
+            "id" => "#{job.id}",
+            "exit_status" => 1
           }
         }
       }

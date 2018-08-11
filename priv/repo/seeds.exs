@@ -1,11 +1,29 @@
 alias ElixirBench.{Benchmarks, Repos}
 
+github_client = Application.get_env(:elixir_bench, :github_client)
+
+if(github_client != ElixirBench.Github.ClientInMemory) do
+  raise """
+  \n
+  #############################################################################
+  Please, before running this seed you need to set :github_client to
+  ElixirBench.Github.ClientInMemory in your config/mix.#{Mix.env()}
+
+  This is necessary because our current scripts are not yet stable enough, so
+  you need to use local calls to mocked data instead of reaching the Github
+  servers in order to fetch the config.yml configuration for the repositories.
+  #############################################################################
+  """
+end
+
 {:ok, runner} = Benchmarks.create_runner(%{name: "test-runner", api_key: "test"})
 {:ok, repo} = Repos.create_repo(%{owner: "elixir-ecto", name: "ecto"})
 
-{:ok, %{id: job_id}} = Benchmarks.create_job(repo, %{branch_name: "mm/benches", commit_sha: "207b2a0"})
+{:ok, %{id: job_id1}} = Benchmarks.create_job(repo, %{branch_name: "mm/benches", commit_sha: "207b2a0"})
+{:ok, %{id: job_id2}} = Benchmarks.create_job(repo, %{branch_name: "mm/benches", commit_sha: "207b2a0"})
 
-{:ok, %{id: ^job_id} = job} = Benchmarks.claim_job(runner)
+{:ok, %{id: failed_job_id}} = Benchmarks.create_job(repo, %{branch_name: "mm/benches", commit_sha: "207b2a0"})
+{:ok, _pending_job} = Benchmarks.create_job(repo, %{branch_name: "mm/benches", commit_sha: "207b2a0"})
 
 data = %{
   "elixir_version" => "1.5.2",
@@ -17,6 +35,7 @@ data = %{
   "log" => """
   [now] Oh how ward it was to run this benchmark!
   """,
+  "exit_status" => 0,
   "measurements" => %{
     "insert_mysql/insert_plain" => %{
       "average" => 393.560253365004,
@@ -73,4 +92,11 @@ data = %{
   }
 }
 
-:ok = Benchmarks.submit_job(job, data)
+{:ok, %{id: ^job_id1} = job1} = Benchmarks.claim_job(runner)
+:ok = Benchmarks.submit_job(job1, data)
+
+{:ok, %{id: ^job_id2} = job2} = Benchmarks.claim_job(runner)
+:ok = Benchmarks.submit_job(job2, data)
+
+{:ok, %{id: ^failed_job_id} = failed_job} = Benchmarks.claim_job(runner)
+:ok = Benchmarks.submit_job(failed_job, %{data | "log" => "Error, exiting with status 127", "exit_status" => 127, "measurements" => nil})
