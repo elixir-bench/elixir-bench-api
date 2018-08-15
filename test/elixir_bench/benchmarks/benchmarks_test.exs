@@ -199,6 +199,20 @@ defmodule ElixirBench.BenchmarksTest do
       assert %Job{id: ^jid, claimed_by: ^rid} = job
     end
 
+    test "return error when max retries limit is reached" do
+      %{id: jid, claimed_by: nil} = insert(:job)
+      %{id: rid} = runner = insert(:runner)
+
+      max_retries = Confex.fetch_env!(:elixir_bench, :job_max_retries)
+
+      1..max_retries
+      |> Enum.each(fn _ ->
+        assert {:ok, job} = Benchmarks.claim_job(runner)
+      end)
+
+      assert {:error, :not_found} = Benchmarks.claim_job(runner)
+    end
+
     test "return error if there is no pending jobs" do
       runner = insert(:runner)
 

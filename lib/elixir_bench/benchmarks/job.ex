@@ -2,9 +2,10 @@ defmodule ElixirBench.Benchmarks.Job do
   use Ecto.Schema
 
   import Ecto.Changeset
-  import Ecto.Query, only: [from: 2]
+  import Ecto.Query, only: [from: 2, where: 2]
 
   alias ElixirBench.Repos
+  alias ElixirBench.Repo
   alias ElixirBench.Benchmarks.{Runner, Job, Config}
 
   schema "jobs" do
@@ -28,11 +29,14 @@ defmodule ElixirBench.Benchmarks.Job do
     field :elixir_version, :string
     field :erlang_version, :string
     field :memory_mb, :integer
+    field :claim_count, :integer, default: 0
 
     embeds_one(:config, Config)
 
     timestamps()
   end
+
+  @max_retries Confex.fetch_env!(:elixir_bench, :job_max_retries)
 
   @submit_fields [
     :elixir_version,
@@ -54,6 +58,9 @@ defmodule ElixirBench.Benchmarks.Job do
   def claim_changeset(%Job{} = job, claimed_by) do
     job
     |> change(claimed_by: claimed_by, claimed_at: DateTime.utc_now())
+    |> change(claim_count: job.claim_count + 1)
+
+    # |> prepare_changes(&increment_claim_count/1)
   end
 
   def create_changeset(%Job{} = job, attrs) do
@@ -72,5 +79,17 @@ defmodule ElixirBench.Benchmarks.Job do
 
   def filter_by_repo(query, repo_id) do
     from(j in query, where: j.repo_id == ^repo_id)
+  end
+
+  def claimable(query) do
+    from(j in query, where: j.claim_count < @max_retries)
+  end
+
+  defp increment_claim_count(changeset) do
+    Job
+    |> where(id: ^changeset.data.id)
+    |> Repo.update_all(inc: [claim_count: 1])
+
+    changeset
   end
 end
