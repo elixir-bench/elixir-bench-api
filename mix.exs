@@ -48,7 +48,7 @@ defmodule ElixirBench.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:cowboy, "~> 1.0"},
       {:absinthe, "~> 1.4"},
-      {:absinthe_plug, "~> 1.4"},
+      {:absinthe_plug, "~> 1.4.2"},
       {:absinthe_ecto, "~> 0.1.3"},
       {:dataloader, "~> 1.0"},
       {:corsica, "~> 1.0"},
