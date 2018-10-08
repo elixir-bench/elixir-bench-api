@@ -12,6 +12,7 @@ env:
   - MIX_ENV=test
 
 before_script:
+  - mix deps.compile
   - mix compile --warnings-as-errors
 
 script:
