@@ -1,4 +1,4 @@
-<img src="../web/public/images/logo.png" height="68" />
+<img src="https://github.com/elixir-bench/elixir-bench.github.io/blob/master/images/logo.png" height="68" />
 
 # ElixirBench API
 
