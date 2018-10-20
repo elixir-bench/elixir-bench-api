@@ -86,6 +86,8 @@ defmodule ElixirBench.Benchmarks do
   end
 
   def list_jobs(page, size) do
+    size = if size < @jobs_max_limit, do: size, else: @jobs_max_limit
+
     Job
     |> paginate(page, size)
     |> Repo.all()
