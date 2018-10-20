@@ -73,7 +73,8 @@ defmodule ElixirBench.Benchmarks do
   end
 
   def paginate(query, page, size) do
-    from(query,
+    from(
+      query,
       limit: ^size,
       offset: ^((page - 1) * size)
     )
