@@ -43,8 +43,11 @@ defmodule ElixirBenchWeb.Schema do
     end
 
     field :jobs, list_of(:job) do
-      resolve(fn _, _ ->
-        {:ok, Benchmarks.list_jobs()}
+      arg(:page, :integer, default_value: 1)
+      arg(:size, :integer, default_value: 10)
+
+      resolve(fn %{page: page_num, size: page_size}, _ ->
+        {:ok, Benchmarks.list_jobs(page_num, page_size)}
       end)
     end
 
