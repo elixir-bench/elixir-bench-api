@@ -1,6 +1,7 @@
 defmodule MeasurementTest do
   alias ElixirBench.Benchmarks.Measurement
   use ElixirBench.DataCase
+  import ElixirBench.Factory
 
   @attrs %{
     "average" => 465.8669101807624,
@@ -60,6 +61,19 @@ defmodule MeasurementTest do
       refute changeset.valid?
       refute Map.has_key?(changeset.changes, :mode)
       assert [mode: {"is invalid", _}] = changeset.errors
+    end
+
+    # field :percentiles, {:map, :float} => this test fail
+    # field :percentiles, :map => this test succeed
+    test "not raise when exponential notation is given to percentiles" do
+      percentiles = %{"50" => 4.165e5, "99" => 4.165e5}
+      measurement = build(:measurement)
+
+      changeset = Measurement.changeset(measurement, %{@attrs | "percentiles" => percentiles})
+      assert {:ok, _} = Repo.insert(changeset)
+
+      measurement = Repo.one(Measurement)
+      assert %{"50" => 416_500, "99" => 416_500} = measurement.percentiles
     end
   end
 end
