@@ -32,6 +32,8 @@ config :elixir_bench,
        :supported_erlang_versions,
        {:system, :list, "SUPPORTED_ERLANG_VERSIONS", ["20.1.2"]}
 
+config :elixir_bench, :job_max_retries, {:system, :integer, "JOB_MAX_RETRIES", 3}
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

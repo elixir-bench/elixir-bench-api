@@ -146,17 +146,17 @@ defmodule ElixirBench.Benchmarks do
   end
 
   defp fetch_unclaimed_job(runner) do
-    # Unclaimed or claimed by this runner but not completed
-    Repo.fetch(
-      from(
-        j in Job,
-        where: is_nil(j.claimed_by) and is_nil(j.claimed_at) and is_nil(j.completed_at),
-        or_where:
-          j.claimed_by == ^runner.id and not is_nil(j.claimed_at) and is_nil(j.completed_at),
-        lock: "FOR UPDATE SKIP LOCKED",
-        order_by: j.inserted_at,
-        limit: 1
-      )
+    # Unclaimed or claimed by this runner but not completed and claim_count < MAX_RETRIES
+    from(
+      j in Job,
+      where: is_nil(j.claimed_by) and is_nil(j.claimed_at) and is_nil(j.completed_at),
+      or_where:
+        j.claimed_by == ^runner.id and not is_nil(j.claimed_at) and is_nil(j.completed_at),
+      lock: "FOR UPDATE SKIP LOCKED",
+      order_by: j.inserted_at,
+      limit: 1
     )
+    |> Job.claimable()
+    |> Repo.fetch()
   end
 end
