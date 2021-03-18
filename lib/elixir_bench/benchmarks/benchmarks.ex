@@ -7,6 +7,9 @@ defmodule ElixirBench.Benchmarks do
   alias ElixirBench.Github
   alias ElixirBench.Benchmarks.{Benchmark, Measurement, Job, Runner, Config}
 
+  @jobs_default_limit 10
+  @jobs_max_limit 50
+
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
@@ -69,8 +72,26 @@ defmodule ElixirBench.Benchmarks do
     Repo.all(from(j in Job, where: j.repo_id in ^repo_ids))
   end
 
+  def paginate(query, page, size) do
+    from(
+      query,
+      limit: ^size,
+      offset: ^((page - 1) * size)
+    )
+  end
+
   def list_jobs() do
-    Repo.all(Job)
+    Job
+    |> paginate(1, @jobs_default_limit)
+    |> Repo.all()
+  end
+
+  def list_jobs(page, size) do
+    size = if size < @jobs_max_limit, do: size, else: @jobs_max_limit
+
+    Job
+    |> paginate(page, size)
+    |> Repo.all()
   end
 
   def get_or_create_job(repo, %{commit_sha: commit_sha} = attrs) do
